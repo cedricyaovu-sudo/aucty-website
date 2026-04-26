@@ -1243,6 +1243,38 @@ body.dark-mode .auction-heart { background: rgba(0,0,0,0.5); }
 .live-bid-time { font-size: 11px; color: rgba(255,255,255,0.3); }
 @media (max-width: 1024px) { .live-body { grid-template-columns: 1fr; } .live-sidebar { display: none; } }
 
+
+.create-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(10,10,15,0.5); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; }
+.create-modal { background: var(--bg-card); border-radius: var(--radius-xl); width: 640px; max-width: 95vw; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); border: 1px solid var(--border); }
+.create-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+.create-header h2 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 800; }
+.create-close { width: 36px; height: 36px; border-radius: 50%; background: var(--bg-hover); display: grid; place-items: center; font-size: 18px; color: var(--text-secondary); }
+.create-close:hover { background: var(--border); }
+.create-body { padding: 24px; }
+.create-section { margin-bottom: 20px; }
+.create-section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 10px; }
+.create-upload { border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: 40px; text-align: center; cursor: pointer; transition: border-color 0.2s; }
+.create-upload:hover { border-color: var(--brand); background: rgba(124,58,237,0.04); }
+.create-upload-icon { font-size: 36px; margin-bottom: 8px; }
+.create-upload-text { font-size: 14px; color: var(--text-secondary); }
+.create-upload-hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.create-input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-input); color: var(--text); font-size: 15px; outline: none; }
+.create-input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(124,58,237,0.15); }
+.create-textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-input); color: var(--text); font-size: 14px; outline: none; resize: vertical; min-height: 80px; }
+.create-textarea:focus { border-color: var(--brand); }
+.create-row { display: flex; gap: 12px; }
+.create-row > * { flex: 1; }
+.create-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+.create-select { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-input); color: var(--text); font-size: 14px; outline: none; }
+.create-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+.create-cancel-btn { padding: 12px 24px; border-radius: var(--radius-full); font-weight: 600; font-size: 14px; border: 1.5px solid var(--border); color: var(--text); background: var(--bg-card); }
+.create-submit-btn { padding: 12px 28px; border-radius: var(--radius-full); font-weight: 700; font-size: 14px; background: var(--gradient); color: #fff; transition: transform 0.15s; }
+.create-submit-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,0.3); }
+.create-steps { display: flex; gap: 8px; margin-bottom: 20px; }
+.create-step { flex: 1; height: 4px; border-radius: 2px; background: var(--border); }
+.create-step.active { background: var(--brand); }
+.create-step.done { background: var(--green); }
+
 </style>
 </head>
 <body>
@@ -1262,6 +1294,8 @@ const state = {
   following: new Set(),
   showAuctionDetail: null,
   showLive: null,
+  showCreateAuction: false,
+  createStep: 1,
   viewCreatorId: null,
   creatorTab: 'listings',
   liveSidebarTab: 'chat',
@@ -1476,6 +1510,7 @@ function renderApp() {
     </div>
     ${state.showAuctionDetail !== null ? renderAuctionDetail(state.showAuctionDetail) : ''}
     ${state.showLive !== null ? renderLive(state.showLive) : ''}
+    ${state.showCreateAuction ? renderCreateAuction() : ''}
     <div class="toast" id="toast"></div>
   `;
 }
@@ -1499,7 +1534,7 @@ function renderTopNav() {
           `).join('')}
         </div>
         <div class="nav-actions">
-          <button class="sell-btn" onclick="showToast('Create auction coming soon!', 'info')">+ Sell</button>
+          <button class="sell-btn" onclick="openCreateAuction()">+ Sell</button>
           <button class="nav-icon-btn" onclick="navigateTo('messages')" title="Messages">
             💬
             <span class="badge">2</span>
@@ -2061,6 +2096,66 @@ function renderCreatorProfile(creatorId) {
   `;
 }
 
+
+// ========== CREATE AUCTION MODAL ==========
+function renderCreateAuction() {
+  var s = state.createStep;
+  var h = '<div class="create-overlay" onclick="if(event.target===this)closeCreateAuction()">';
+  h += '<div class="create-modal">';
+  h += '<div class="create-header"><h2>'+(s===1?'Create Listing':s===2?'Set Pricing':'Review & Publish')+'</h2>';
+  h += '<button class="create-close" onclick="closeCreateAuction()">&#10005;</button></div>';
+  h += '<div class="create-body">';
+  h += '<div class="create-steps">';
+  h += '<div class="create-step '+(s>=1?(s>1?'done':'active'):'')+'"></div>';
+  h += '<div class="create-step '+(s>=2?(s>2?'done':'active'):'')+'"></div>';
+  h += '<div class="create-step '+(s>=3?'active':'')+'"></div></div>';
+  if (s === 1) {
+    h += '<div class="create-section"><div class="create-section-title">Photos</div>';
+    h += '<div class="create-upload"><div class="create-upload-icon">&#128247;</div>';
+    h += '<div class="create-upload-text">Drag photos here or click to browse</div>';
+    h += '<div class="create-upload-hint">Up to 10 photos. JPG, PNG, or WEBP. Max 10MB each.</div></div></div>';
+    h += '<div class="create-section"><div class="create-label">Title</div>';
+    h += '<input class="create-input" type="text" placeholder="e.g. Vintage Rolex Submariner 1978"></div>';
+    h += '<div class="create-section"><div class="create-label">Description</div>';
+    h += '<textarea class="create-textarea" placeholder="Describe your item: condition, provenance, dimensions..."></textarea></div>';
+    h += '<div class="create-row"><div><div class="create-label">Category</div><select class="create-select">';
+    h += '<option value="">Select category</option>';
+    categories.slice(1).forEach(function(c) { h += '<option value="'+c.id+'">'+c.icon+' '+c.label+'</option>'; });
+    h += '</select></div><div><div class="create-label">Condition</div>';
+    h += '<select class="create-select"><option>New with tags</option><option>Like new</option><option>Very good</option><option>Good</option><option>Fair</option></select></div></div>';
+  } else if (s === 2) {
+    h += '<div class="create-section"><div class="create-label">Starting Price ($)</div>';
+    h += '<input class="create-input" type="number" placeholder="100"></div>';
+    h += '<div class="create-row"><div><div class="create-label">Reserve Price ($)</div>';
+    h += '<input class="create-input" type="number" placeholder="Optional minimum"></div>';
+    h += '<div><div class="create-label">Buy Now Price ($)</div>';
+    h += '<input class="create-input" type="number" placeholder="Optional instant buy"></div></div>';
+    h += '<div class="create-section"><div class="create-label">Auction Duration</div>';
+    h += '<select class="create-select"><option>1 hour</option><option>3 hours</option><option>6 hours</option><option selected>12 hours</option><option>24 hours</option><option>3 days</option><option>7 days</option></select></div>';
+    h += '<div class="create-row"><div><div class="create-label">Shipping</div>';
+    h += '<select class="create-select"><option>Free shipping</option><option>Buyer pays</option><option>Local pickup</option></select></div>';
+    h += '<div><div class="create-label">Ships from</div>';
+    h += '<input class="create-input" type="text" placeholder="City, Country"></div></div>';
+    h += '<div class="create-section" style="margin-top:16px"><label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px"><input type="checkbox" style="accent-color:var(--brand);width:18px;height:18px"> Go live when auction starts</label></div>';
+  } else {
+    h += '<div style="text-align:center;padding:20px 0"><div style="font-size:48px;margin-bottom:12px">&#128640;</div>';
+    h += '<h3 style="font-size:20px;font-weight:700;margin-bottom:8px">Ready to publish!</h3>';
+    h += '<p style="color:var(--text-secondary);font-size:14px;max-width:400px;margin:0 auto">Your listing will go live immediately. Buyers can bid as soon as it is published. You earn 51% of the final sale price.</p></div>';
+    h += '<div style="background:var(--bg-hover);border-radius:var(--radius-md);padding:16px;margin-top:16px">';
+    h += '<div style="font-size:13px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Listing Summary</div>';
+    h += '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text-secondary)">Platform fee</span><span style="font-weight:700">49%</span></div>';
+    h += '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text-secondary)">Your earnings</span><span style="font-weight:700;color:var(--green)">51%</span></div>';
+    h += '<div style="display:flex;justify-content:space-between;padding:8px 0"><span style="color:var(--text-secondary)">Buyer protection</span><span style="font-weight:700">Included</span></div></div>';
+  }
+  h += '</div><div class="create-footer">';
+  if (s > 1) h += '<button class="create-cancel-btn" onclick="state.createStep--;render()">Back</button>';
+  else h += '<button class="create-cancel-btn" onclick="closeCreateAuction()">Cancel</button>';
+  if (s < 3) h += '<button class="create-submit-btn" onclick="state.createStep++;render()">Continue</button>';
+  else h += '<button class="create-submit-btn" onclick="publishAuction()">&#127881; Publish Listing</button>';
+  h += '</div></div></div>';
+  return h;
+}
+
 // ========== LIVE STREAM INTERFACE ==========
 function renderLive(auctionId) {
   const a = auctions.find(x => x.id === auctionId);
@@ -2166,6 +2261,11 @@ function placeBid(auctionId) {
     openDetail(auctionId);
   }
 }
+
+
+function openCreateAuction() { state.showCreateAuction = true; state.createStep = 1; render(); }
+function closeCreateAuction() { state.showCreateAuction = false; render(); }
+function publishAuction() { state.showCreateAuction = false; showToast('Listing published! It is now live.', 'success'); render(); }
 
 function logout() {
   state.isAuthenticated = false;
