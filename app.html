@@ -1155,6 +1155,19 @@ body.dark-mode .auction-heart { background: rgba(0,0,0,0.5); }
   .nav-search { max-width: 240px; }
   .auction-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
 }
+
+/* ========== LIVE STREAMS AUTOSCROLL ========== */
+@keyframes autoscroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.live-streams-row.autoscroll {
+  animation: autoscroll 30s linear infinite;
+  width: max-content;
+}
+.live-streams-row.autoscroll:hover {
+  animation-play-state: paused;
+}
 </style>
 </head>
 <body>
@@ -1508,7 +1521,26 @@ function renderDiscover() {
         <span class="live-tag"><span class="dot"></span> LIVE NOW</span>
         <h2>Creators are going live</h2>
         <p>${liveAuctions.length} live streams happening right now. Watch sellers show items up close and bid in real time.</p>
-        <div class="live-streams-row">
+        <div class="live-streams-row autoscroll">
+          ${liveAuctions.map(a => `
+            <div class="stream-card" onclick="openDetail(${a.id})">
+              <div class="stream-thumb">
+                <div class="stream-thumb-bg" style="background:linear-gradient(135deg, ${a.creator.avatar}, ${a.creator.avatar}88); display:grid; place-items:center; font-size:64px; color:rgba(255,255,255,0.3);">${a.image}</div>
+                <div class="stream-thumb-gradient"></div>
+                <div class="stream-live-badge"><span class="dot"></span> LIVE</div>
+                <div class="stream-viewers">👁 ${a.viewers?.toLocaleString()}</div>
+                <div class="stream-info">
+                  <div class="stream-creator">
+                    <div class="stream-creator-ava" style="background:${a.creator.avatar}">${a.creator.initials}</div>
+                    <span class="stream-creator-name">${a.creator.name}</span>
+                    ${a.creator.verified ? '<span class="stream-creator-verified">✓</span>' : ''}
+                  </div>
+                  <div class="stream-title">${a.title}</div>
+                  <span class="stream-category">${categories.find(c => c.id === a.category)?.label || a.category}</span>
+                </div>
+              </div>
+            </div>
+          `).join('')}
           ${liveAuctions.map(a => `
             <div class="stream-card" onclick="openDetail(${a.id})">
               <div class="stream-thumb">
