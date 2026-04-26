@@ -1588,7 +1588,7 @@ function renderSidebar() {
         <div class="sidebar-title">Live Now</div>
         <div class="sidebar-creators">
           ${liveCreators.map(c => `
-            <div class="sidebar-creator" onclick="showToast('Watching ${c.name}...', 'info')">
+            <div class="sidebar-creator" onclick="viewCreator(${c.id})">
               <div class="sidebar-creator-ava" style="background:${c.avatar}">
                 ${c.initials}
                 <span class="live-dot"></span>
@@ -1606,7 +1606,7 @@ function renderSidebar() {
         <div class="sidebar-title">Recommended</div>
         <div class="sidebar-creators">
           ${offCreators.map(c => `
-            <div class="sidebar-creator" onclick="showToast('Viewing ${c.name}...', 'info')">
+            <div class="sidebar-creator" onclick="viewCreator(${c.id})">
               <div class="sidebar-creator-ava" style="background:${c.avatar}">${c.initials}</div>
               <div>
                 <div class="sidebar-creator-name">${c.name}</div>
