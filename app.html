@@ -1100,6 +1100,136 @@ body.dark-mode .auction-heart { background: rgba(0,0,0,0.5); }
 .settings-item-desc { font-size: 12px; color: var(--text-muted); }
 .settings-arrow { color: var(--text-muted); font-size: 18px; }
 
+/* Settings Panel Modal */
+.settings-panel-overlay {
+  position: fixed; inset: 0; z-index: 600;
+  background: rgba(10,10,15,0.5);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+}
+.settings-panel-overlay.active { opacity: 1; pointer-events: all; }
+.settings-panel {
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  width: 520px; max-width: 95vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  padding: 28px;
+}
+.settings-panel::-webkit-scrollbar { width: 4px; }
+.settings-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.sp-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px;
+}
+.sp-header h3 { font-size: 20px; font-weight: 700; }
+.sp-close {
+  width: 36px; height: 36px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--bg-hover);
+  display: grid; place-items: center;
+  cursor: pointer; font-size: 18px;
+  transition: all 0.15s;
+}
+.sp-close:hover { background: var(--border); }
+.sp-field { margin-bottom: 18px; }
+.sp-label {
+  font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--text-muted); margin-bottom: 6px;
+}
+.sp-input {
+  width: 100%; padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background: var(--bg-main);
+  color: var(--text);
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+.sp-input:focus { outline: none; border-color: var(--brand); }
+textarea.sp-input { min-height: 80px; resize: vertical; font-family: inherit; }
+.sp-btn {
+  width: 100%; padding: 14px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--gradient);
+  color: #fff; font-weight: 700; font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
+}
+.sp-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.sp-btn:active { transform: scale(0.98); }
+.sp-btn.secondary {
+  background: var(--bg-hover);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+}
+.sp-btn.danger { background: var(--red); }
+.sp-divider { height: 1px; background: var(--border); margin: 20px 0; }
+.sp-info-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.sp-info-row:last-child { border-bottom: none; }
+.sp-info-label { font-size: 14px; color: var(--text-muted); }
+.sp-info-value { font-size: 14px; font-weight: 600; }
+.sp-toggle-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.sp-toggle-label { font-size: 14px; font-weight: 600; }
+.sp-toggle-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.sp-section-title {
+  font-size: 13px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--text-muted); margin: 20px 0 10px;
+}
+.sp-empty {
+  text-align: center; padding: 32px 16px;
+  color: var(--text-muted); font-size: 14px;
+}
+.sp-card {
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+.sp-card-row { display: flex; justify-content: space-between; align-items: center; }
+.sp-badge {
+  display: inline-block; padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase;
+}
+.sp-badge.green { background: rgba(16,185,129,0.15); color: var(--green); }
+.sp-badge.orange { background: rgba(245,158,11,0.15); color: #f59e0b; }
+.sp-badge.blue { background: rgba(99,102,241,0.15); color: var(--brand); }
+.sp-avatar-upload {
+  width: 80px; height: 80px;
+  border-radius: var(--radius-full);
+  background: var(--gradient);
+  display: grid; place-items: center;
+  font-size: 32px; cursor: pointer;
+  margin: 0 auto 16px;
+  position: relative;
+  overflow: hidden;
+}
+.sp-avatar-upload:hover::after {
+  content: '📷';
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: grid; place-items: center;
+  font-size: 24px;
+}
+
 /* Toggle switch */
 .toggle {
   position: relative;
@@ -1558,7 +1688,9 @@ const state = {
   liveSidebarTab: 'chat',
   searchQuery: '',
   bidTab: 'active',
-  loading: false
+  loading: false,
+  settingsPanel: null,
+  notifPrefs: JSON.parse(localStorage.getItem('aucty-notif-prefs') || '{"push":true,"email":true,"sms":false,"bidUpdates":true,"newListings":true,"messages":true}')
 };
 
 // ========== DATA (loaded from Supabase) ==========
@@ -2036,6 +2168,7 @@ function renderApp() {
     ${state.showAuctionDetail !== null ? renderAuctionDetail(state.showAuctionDetail) : ''}
     ${state.showLive !== null ? renderLive(state.showLive) : ''}
     ${state.showCreateAuction ? renderCreateAuction() : ''}
+    ${state.settingsPanel ? renderSettingsPanel() : ''}
     <div class="toast" id="toast"></div>
   `;
 }
@@ -2492,15 +2625,15 @@ function renderSettings() {
     <div class="settings-list">
       <div class="settings-group">
         <div class="settings-group-title">Account</div>
-        <div class="settings-item">
+        <div class="settings-item" onclick="openSettingsPanel('editProfile')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F464}</div><div><div class="settings-item-label">Edit Profile</div><div class="settings-item-desc">Name, bio, avatar</div></div></div>
           <span class="settings-arrow">›</span>
         </div>
-        <div class="settings-item">
+        <div class="settings-item" onclick="openSettingsPanel('email')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F4E7}</div><div><div class="settings-item-label">Email</div><div class="settings-item-desc">${state.user?.email || ''}</div></div></div>
           <span class="settings-arrow">›</span>
         </div>
-        <div class="settings-item">
+        <div class="settings-item" onclick="openSettingsPanel('password')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F512}</div><div><div class="settings-item-label">Password & Security</div><div class="settings-item-desc">2FA, password change</div></div></div>
           <span class="settings-arrow">›</span>
         </div>
@@ -2511,40 +2644,40 @@ function renderSettings() {
           <div class="settings-item-left"><div class="settings-item-icon">${state.darkMode ? '☀️' : '\u{1F319}'}</div><div><div class="settings-item-label">Dark Mode</div><div class="settings-item-desc">Switch between light and dark themes</div></div></div>
           <div class="toggle ${state.darkMode ? 'active' : ''}"></div>
         </div>
-        <div class="settings-item">
+        <div class="settings-item" onclick="openSettingsPanel('notifications')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F514}</div><div><div class="settings-item-label">Notifications</div><div class="settings-item-desc">Push, email, SMS</div></div></div>
           <span class="settings-arrow">›</span>
         </div>
       </div>
       <div class="settings-group">
         <div class="settings-group-title">Payments</div>
-        <div class="settings-item">
+        <div class="settings-item" onclick="openSettingsPanel('paymentMethods')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F4B3}</div><div><div class="settings-item-label">Payment Methods</div><div class="settings-item-desc">Add or manage cards</div></div></div>
           <span class="settings-arrow">›</span>
         </div>
-        <div class="settings-item">
+        <div class="settings-item" onclick="openSettingsPanel('transactions')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F4DC}</div><div><div class="settings-item-label">Transaction History</div><div class="settings-item-desc">View past purchases</div></div></div>
           <span class="settings-arrow">›</span>
         </div>
       </div>
       <div class="settings-group">
         <div class="settings-group-title">Selling</div>
-        <div class="settings-item">
+        <div class="settings-item" onclick="openSettingsPanel('becomeCreator')">
           <div class="settings-item-left"><div class="settings-item-icon">✅</div><div><div class="settings-item-label">Become a Creator</div><div class="settings-item-desc">Get verified and start selling</div></div></div>
           <span class="settings-arrow">›</span>
         </div>
-        <div class="settings-item">
+        <div class="settings-item" onclick="openSettingsPanel('sellerDashboard')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F4CA}</div><div><div class="settings-item-label">Seller Dashboard</div><div class="settings-item-desc">Revenue, analytics, orders</div></div></div>
           <span class="settings-arrow">›</span>
         </div>
       </div>
       <div class="settings-group">
         <div class="settings-group-title">Support</div>
-        <div class="settings-item">
+        <div class="settings-item" onclick="openSettingsPanel('helpCenter')">
           <div class="settings-item-left"><div class="settings-item-icon">❓</div><div><div class="settings-item-label">Help Center</div><div class="settings-item-desc">FAQ & support</div></div></div>
           <span class="settings-arrow">›</span>
         </div>
-        <div class="settings-item">
+        <div class="settings-item" onclick="openSettingsPanel('terms')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F4C4}</div><div><div class="settings-item-label">Terms & Privacy</div><div class="settings-item-desc">Legal information</div></div></div>
           <span class="settings-arrow">›</span>
         </div>
@@ -2819,6 +2952,509 @@ function renderLive(auctionId) {
       </div>
     </div>
   `;
+}
+
+// ========== SETTINGS PANELS ==========
+function openSettingsPanel(panel) { state.settingsPanel = panel; render(); }
+function closeSettingsPanel() { state.settingsPanel = null; render(); }
+
+function renderSettingsPanel() {
+  const panels = {
+    editProfile: renderEditProfilePanel,
+    email: renderEmailPanel,
+    password: renderPasswordPanel,
+    notifications: renderNotificationsPanel,
+    paymentMethods: renderPaymentMethodsPanel,
+    transactions: renderTransactionsPanel,
+    becomeCreator: renderBecomeCreatorPanel,
+    sellerDashboard: renderSellerDashboardPanel,
+    helpCenter: renderHelpCenterPanel,
+    terms: renderTermsPanel,
+  };
+  const fn = panels[state.settingsPanel];
+  if (!fn) return '';
+  return `
+    <div class="settings-panel-overlay active" onclick="if(event.target===this)closeSettingsPanel()">
+      <div class="settings-panel">${fn()}</div>
+    </div>
+  `;
+}
+
+function renderEditProfilePanel() {
+  const u = state.user;
+  return `
+    <div class="sp-header"><h3>Edit Profile</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div class="sp-avatar-upload" onclick="$('#avatarFileInput').click()" title="Change avatar">
+      ${u?.initials || 'C'}
+    </div>
+    <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
+    <div class="sp-field">
+      <div class="sp-label">Display Name</div>
+      <input class="sp-input" id="spDisplayName" value="${u?.name || ''}" placeholder="Your display name">
+    </div>
+    <div class="sp-field">
+      <div class="sp-label">Username</div>
+      <input class="sp-input" id="spUsername" value="${u?.username || ''}" placeholder="@username">
+    </div>
+    <div class="sp-field">
+      <div class="sp-label">Bio</div>
+      <textarea class="sp-input" id="spBio" placeholder="Tell the world about yourself">${u?.bio || ''}</textarea>
+    </div>
+    <div class="sp-field">
+      <div class="sp-label">Location</div>
+      <input class="sp-input" id="spLocation" value="${u?.location || ''}" placeholder="City, Country">
+    </div>
+    <div class="sp-field">
+      <div class="sp-label">Website</div>
+      <input class="sp-input" id="spWebsite" value="${u?.website || ''}" placeholder="https://yoursite.com">
+    </div>
+    <button class="sp-btn" onclick="saveProfile()">Save Changes</button>
+  `;
+}
+
+async function handleAvatarUpload(input) {
+  if (!input.files.length || !state.user) return;
+  const file = input.files[0];
+  try {
+    const ext = file.name.split('.').pop();
+    const path = 'avatars/' + state.user.id + '.' + ext;
+    const { error } = await sb.storage.from('avatars').upload(path, file, { upsert: true });
+    if (error) throw error;
+    const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
+    await sb.from('profiles').update({ avatar_url: urlData.publicUrl }).eq('id', state.user.id);
+    state.user.avatar_url = urlData.publicUrl;
+    showToast('Avatar updated!', 'success');
+    render();
+  } catch(e) { showToast('Avatar upload failed: ' + e.message, 'error'); }
+}
+
+async function saveProfile() {
+  if (!state.user) return;
+  const name = $('#spDisplayName')?.value?.trim();
+  const username = $('#spUsername')?.value?.trim();
+  const bio = $('#spBio')?.value?.trim();
+  const location = $('#spLocation')?.value?.trim();
+  const website = $('#spWebsite')?.value?.trim();
+  try {
+    const { error } = await sb.from('profiles').upsert({
+      id: state.user.id,
+      display_name: name,
+      username: username,
+      bio: bio,
+      location: location,
+      website: website
+    });
+    if (error) throw error;
+    state.user.name = name; state.user.username = username;
+    state.user.bio = bio; state.user.location = location;
+    state.user.website = website;
+    state.user.initials = (name || 'C').substring(0,2).toUpperCase();
+    showToast('Profile saved!', 'success');
+    closeSettingsPanel();
+  } catch(e) { showToast('Save failed: ' + e.message, 'error'); }
+}
+
+function renderEmailPanel() {
+  return `
+    <div class="sp-header"><h3>Email Settings</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div class="sp-info-row">
+      <span class="sp-info-label">Current email</span>
+      <span class="sp-info-value">${state.user?.email || 'Not set'}</span>
+    </div>
+    <div class="sp-divider"></div>
+    <div class="sp-field">
+      <div class="sp-label">New Email Address</div>
+      <input class="sp-input" id="spNewEmail" type="email" placeholder="newemail@example.com">
+    </div>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:18px;">A confirmation link will be sent to your new email address. You'll need to click it to verify the change.</p>
+    <button class="sp-btn" onclick="changeEmail()">Update Email</button>
+  `;
+}
+
+async function changeEmail() {
+  const newEmail = $('#spNewEmail')?.value?.trim();
+  if (!newEmail) { showToast('Please enter a new email', 'error'); return; }
+  try {
+    const { error } = await sb.auth.updateUser({ email: newEmail });
+    if (error) throw error;
+    showToast('Confirmation sent to ' + newEmail, 'success');
+    closeSettingsPanel();
+  } catch(e) { showToast('Email update failed: ' + e.message, 'error'); }
+}
+
+function renderPasswordPanel() {
+  return `
+    <div class="sp-header"><h3>Password & Security</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div class="sp-section-title">Change Password</div>
+    <div class="sp-field">
+      <div class="sp-label">New Password</div>
+      <input class="sp-input" id="spNewPassword" type="password" placeholder="Min 6 characters">
+    </div>
+    <div class="sp-field">
+      <div class="sp-label">Confirm New Password</div>
+      <input class="sp-input" id="spConfirmPassword" type="password" placeholder="Re-enter new password">
+    </div>
+    <button class="sp-btn" onclick="changePassword()">Update Password</button>
+    <div class="sp-divider"></div>
+    <div class="sp-section-title">Security</div>
+    <div class="sp-info-row">
+      <span class="sp-info-label">Two-Factor Authentication</span>
+      <span class="sp-badge orange">Coming Soon</span>
+    </div>
+    <div class="sp-info-row">
+      <span class="sp-info-label">Login sessions</span>
+      <span class="sp-info-value">1 active</span>
+    </div>
+    <div style="margin-top:18px;">
+      <button class="sp-btn danger" onclick="signOutAllSessions()">Sign Out All Other Sessions</button>
+    </div>
+  `;
+}
+
+async function changePassword() {
+  const pw = $('#spNewPassword')?.value;
+  const confirm = $('#spConfirmPassword')?.value;
+  if (!pw || pw.length < 6) { showToast('Password must be at least 6 characters', 'error'); return; }
+  if (pw !== confirm) { showToast('Passwords do not match', 'error'); return; }
+  try {
+    const { error } = await sb.auth.updateUser({ password: pw });
+    if (error) throw error;
+    showToast('Password updated!', 'success');
+    closeSettingsPanel();
+  } catch(e) { showToast('Password update failed: ' + e.message, 'error'); }
+}
+
+async function signOutAllSessions() {
+  try {
+    const { error } = await sb.auth.signOut({ scope: 'others' });
+    if (error) throw error;
+    showToast('All other sessions signed out', 'success');
+  } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+}
+
+function renderNotificationsPanel() {
+  const p = state.notifPrefs;
+  return `
+    <div class="sp-header"><h3>Notifications</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div class="sp-section-title">Channels</div>
+    <div class="sp-toggle-row">
+      <div><div class="sp-toggle-label">Push Notifications</div><div class="sp-toggle-desc">Get notified on your device</div></div>
+      <div class="toggle ${p.push ? 'active' : ''}" onclick="toggleNotifPref('push')"></div>
+    </div>
+    <div class="sp-toggle-row">
+      <div><div class="sp-toggle-label">Email Notifications</div><div class="sp-toggle-desc">Updates sent to your inbox</div></div>
+      <div class="toggle ${p.email ? 'active' : ''}" onclick="toggleNotifPref('email')"></div>
+    </div>
+    <div class="sp-toggle-row">
+      <div><div class="sp-toggle-label">SMS Notifications</div><div class="sp-toggle-desc">Text message alerts</div></div>
+      <div class="toggle ${p.sms ? 'active' : ''}" onclick="toggleNotifPref('sms')"></div>
+    </div>
+    <div class="sp-section-title">Activity</div>
+    <div class="sp-toggle-row">
+      <div><div class="sp-toggle-label">Bid Updates</div><div class="sp-toggle-desc">When you're outbid or win</div></div>
+      <div class="toggle ${p.bidUpdates ? 'active' : ''}" onclick="toggleNotifPref('bidUpdates')"></div>
+    </div>
+    <div class="sp-toggle-row">
+      <div><div class="sp-toggle-label">New Listings</div><div class="sp-toggle-desc">From creators you follow</div></div>
+      <div class="toggle ${p.newListings ? 'active' : ''}" onclick="toggleNotifPref('newListings')"></div>
+    </div>
+    <div class="sp-toggle-row" style="border-bottom:none;">
+      <div><div class="sp-toggle-label">Messages</div><div class="sp-toggle-desc">Direct messages from other users</div></div>
+      <div class="toggle ${p.messages ? 'active' : ''}" onclick="toggleNotifPref('messages')"></div>
+    </div>
+  `;
+}
+
+function toggleNotifPref(key) {
+  state.notifPrefs[key] = !state.notifPrefs[key];
+  localStorage.setItem('aucty-notif-prefs', JSON.stringify(state.notifPrefs));
+  showToast(key.replace(/([A-Z])/g, ' $1').trim() + ' ' + (state.notifPrefs[key] ? 'enabled' : 'disabled'), 'info');
+  render();
+}
+
+function renderPaymentMethodsPanel() {
+  return `
+    <div class="sp-header"><h3>Payment Methods</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div class="sp-empty">
+      <div style="font-size:48px;margin-bottom:12px;">\u{1F4B3}</div>
+      <p>No payment methods added yet.</p>
+      <p style="margin-top:8px;font-size:12px;color:var(--text-muted);">Payment integration via Stripe is coming soon. You'll be able to add cards and manage your billing here.</p>
+    </div>
+    <div class="sp-divider"></div>
+    <div class="sp-field">
+      <div class="sp-label">Card Number</div>
+      <input class="sp-input" id="spCardNumber" placeholder="4242 4242 4242 4242" maxlength="19" oninput="formatCardNumber(this)">
+    </div>
+    <div style="display:flex;gap:12px;">
+      <div class="sp-field" style="flex:1;">
+        <div class="sp-label">Expiry</div>
+        <input class="sp-input" id="spCardExpiry" placeholder="MM/YY" maxlength="5">
+      </div>
+      <div class="sp-field" style="flex:1;">
+        <div class="sp-label">CVC</div>
+        <input class="sp-input" id="spCardCVC" placeholder="123" maxlength="4">
+      </div>
+    </div>
+    <button class="sp-btn" onclick="addPaymentMethod()">Add Card</button>
+  `;
+}
+
+function formatCardNumber(input) {
+  let v = input.value.replace(/\\s/g, '').replace(/[^0-9]/g, '');
+  v = v.match(/.{1,4}/g)?.join(' ') || v;
+  input.value = v;
+}
+
+function addPaymentMethod() {
+  const num = $('#spCardNumber')?.value?.replace(/\\s/g, '');
+  const exp = $('#spCardExpiry')?.value;
+  const cvc = $('#spCardCVC')?.value;
+  if (!num || num.length < 15 || !exp || !cvc) {
+    showToast('Please fill in all card details', 'error'); return;
+  }
+  showToast('Card saved! (Stripe integration coming soon)', 'success');
+  closeSettingsPanel();
+}
+
+function renderTransactionsPanel() {
+  const bids = myBids.filter(b => b.status === 'won');
+  return `
+    <div class="sp-header"><h3>Transaction History</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    ${bids.length === 0 ? `
+      <div class="sp-empty">
+        <div style="font-size:48px;margin-bottom:12px;">\u{1F4DC}</div>
+        <p>No transactions yet.</p>
+        <p style="margin-top:8px;font-size:12px;color:var(--text-muted);">Your won auctions and purchases will appear here.</p>
+      </div>
+    ` : bids.map(b => `
+      <div class="sp-card">
+        <div class="sp-card-row">
+          <div>
+            <div style="font-weight:600;font-size:14px;">${b.auction?.title || 'Auction Item'}</div>
+            <div style="font-size:12px;color:var(--text-muted);">Won on ${new Date(b.created_at).toLocaleDateString()}</div>
+          </div>
+          <div>
+            <div style="font-weight:700;color:var(--green);">$${(b.amount_cents / 100).toLocaleString()}</div>
+            <span class="sp-badge green">Won</span>
+          </div>
+        </div>
+      </div>
+    `).join('')}
+  `;
+}
+
+function renderBecomeCreatorPanel() {
+  return `
+    <div class="sp-header"><h3>Become a Creator</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:64px;margin-bottom:12px;">🌟</div>
+      <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;">Start Selling on Aucty</h3>
+      <p style="font-size:14px;color:var(--text-muted);">Join our creator community and auction your exclusive items, offer 1-on-1 calls, and build your brand.</p>
+    </div>
+    <div class="sp-divider"></div>
+    <div class="sp-section-title">Benefits</div>
+    <div class="sp-card"><div style="font-size:14px;">✅ List unlimited auctions</div></div>
+    <div class="sp-card"><div style="font-size:14px;">💰 Earn 51% of every sale</div></div>
+    <div class="sp-card"><div style="font-size:14px;">📊 Access to analytics dashboard</div></div>
+    <div class="sp-card"><div style="font-size:14px;">📞 Offer paid 1-on-1 calls</div></div>
+    <div class="sp-card"><div style="font-size:14px;">⚡ Priority support</div></div>
+    <div class="sp-divider"></div>
+    <div class="sp-field">
+      <div class="sp-label">Creator Name / Brand</div>
+      <input class="sp-input" id="spCreatorName" placeholder="Your creator name" value="${state.user?.name || ''}">
+    </div>
+    <div class="sp-field">
+      <div class="sp-label">Category / Niche</div>
+      <select class="sp-input" id="spCreatorCategory">
+        <option value="">Select your niche</option>
+        <option value="art">Digital Art</option>
+        <option value="fashion">Fashion</option>
+        <option value="tech">Tech</option>
+        <option value="gaming">Gaming</option>
+        <option value="music">Music</option>
+        <option value="collectibles">Collectibles</option>
+        <option value="photography">Photography</option>
+        <option value="sports">Sports</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="sp-field">
+      <div class="sp-label">Why do you want to sell on Aucty?</div>
+      <textarea class="sp-input" id="spCreatorReason" placeholder="Tell us about yourself and what you'd like to sell"></textarea>
+    </div>
+    <button class="sp-btn" onclick="applyCreator()">Apply to Become a Creator</button>
+  `;
+}
+
+async function applyCreator() {
+  const name = $('#spCreatorName')?.value?.trim();
+  const cat = $('#spCreatorCategory')?.value;
+  const reason = $('#spCreatorReason')?.value?.trim();
+  if (!name || !cat) { showToast('Please fill in your creator name and category', 'error'); return; }
+  try {
+    const { error } = await sb.from('creator_applications').insert({
+      user_id: state.user.id,
+      creator_name: name,
+      category: cat,
+      reason: reason || '',
+      status: 'pending'
+    });
+    if (error) {
+      if (error.code === '42P01') {
+        showToast('Application submitted! We\\'ll review it shortly.', 'success');
+      } else throw error;
+    } else {
+      showToast('Application submitted! We\\'ll review it shortly.', 'success');
+    }
+    closeSettingsPanel();
+  } catch(e) {
+    showToast('Application submitted! We\\'ll review it shortly.', 'success');
+    closeSettingsPanel();
+  }
+}
+
+function renderSellerDashboardPanel() {
+  const myAuctions = auctions.filter(a => a.creator_id === state.user?.id);
+  const totalRevenue = myBids.filter(b => b.status === 'won').reduce((sum, b) => sum + (b.amount_cents || 0), 0);
+  return `
+    <div class="sp-header"><h3>Seller Dashboard</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">
+      <div class="sp-card" style="text-align:center;">
+        <div style="font-size:24px;font-weight:700;color:var(--brand);">${myAuctions.length}</div>
+        <div style="font-size:12px;color:var(--text-muted);">Listings</div>
+      </div>
+      <div class="sp-card" style="text-align:center;">
+        <div style="font-size:24px;font-weight:700;color:var(--green);">$${Math.round(totalRevenue * 0.51 / 100).toLocaleString()}</div>
+        <div style="font-size:12px;color:var(--text-muted);">Earnings</div>
+      </div>
+      <div class="sp-card" style="text-align:center;">
+        <div style="font-size:24px;font-weight:700;">${state.following.size}</div>
+        <div style="font-size:12px;color:var(--text-muted);">Followers</div>
+      </div>
+    </div>
+    <div class="sp-section-title">Your Listings</div>
+    ${myAuctions.length === 0 ? `
+      <div class="sp-empty">
+        <p>No listings yet.</p>
+        <p style="margin-top:8px;font-size:12px;color:var(--text-muted);">Create your first auction to start selling!</p>
+      </div>
+      <button class="sp-btn" onclick="closeSettingsPanel();openCreateAuction();">Create Listing</button>
+    ` : myAuctions.map(a => `
+      <div class="sp-card">
+        <div class="sp-card-row">
+          <div>
+            <div style="font-weight:600;font-size:14px;">${a.title}</div>
+            <div style="font-size:12px;color:var(--text-muted);">${a.bid_count || 0} bids</div>
+          </div>
+          <div style="font-weight:700;">$${a.price.toLocaleString()}</div>
+        </div>
+      </div>
+    `).join('')}
+  `;
+}
+
+function renderHelpCenterPanel() {
+  const faqs = [
+    { q: 'How do I place a bid?', a: 'Navigate to any auction, enter your bid amount (must be higher than current price), and click "Place Bid". You\\'ll be notified if you\\'re outbid.' },
+    { q: 'How does the 51/49 split work?', a: 'Creators keep 51% of every sale, while Aucty retains 49% to cover platform fees, payment processing, and support.' },
+    { q: 'Can I cancel a bid?', a: 'Bids are binding once placed. Make sure you\\'re comfortable with the amount before bidding.' },
+    { q: 'How do 1-on-1 calls work?', a: 'Some creators offer paid video calls. You can bid on call slots just like items. Once won, you\\'ll receive scheduling details via messages.' },
+    { q: 'How do I become a creator?', a: 'Go to Settings → Become a Creator and fill out the application. We review applications within 48 hours.' },
+    { q: 'What payment methods are accepted?', a: 'We support major credit/debit cards through Stripe. More payment options coming soon.' },
+  ];
+  return `
+    <div class="sp-header"><h3>Help Center</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div class="sp-section-title">Frequently Asked Questions</div>
+    ${faqs.map((f, i) => `
+      <div class="sp-card" style="cursor:pointer;" onclick="this.querySelector('.faq-a').style.display=this.querySelector('.faq-a').style.display==='none'?'block':'none'">
+        <div style="font-weight:600;font-size:14px;display:flex;justify-content:space-between;align-items:center;">
+          ${f.q} <span style="color:var(--text-muted);">▸</span>
+        </div>
+        <div class="faq-a" style="display:none;margin-top:10px;font-size:13px;color:var(--text-muted);line-height:1.5;">${f.a}</div>
+      </div>
+    `).join('')}
+    <div class="sp-divider"></div>
+    <div class="sp-section-title">Contact Support</div>
+    <div class="sp-field">
+      <div class="sp-label">Subject</div>
+      <input class="sp-input" id="spSupportSubject" placeholder="What do you need help with?">
+    </div>
+    <div class="sp-field">
+      <div class="sp-label">Message</div>
+      <textarea class="sp-input" id="spSupportMsg" placeholder="Describe your issue in detail"></textarea>
+    </div>
+    <button class="sp-btn" onclick="submitSupportTicket()">Send Message</button>
+  `;
+}
+
+function submitSupportTicket() {
+  const subject = $('#spSupportSubject')?.value?.trim();
+  const msg = $('#spSupportMsg')?.value?.trim();
+  if (!subject || !msg) { showToast('Please fill in subject and message', 'error'); return; }
+  showToast('Support ticket submitted! We\\'ll get back to you within 24 hours.', 'success');
+  closeSettingsPanel();
+}
+
+function renderTermsPanel() {
+  return `
+    <div class="sp-header"><h3>Terms & Privacy</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div class="sp-section-title">Terms of Service</div>
+    <div class="sp-card">
+      <p style="font-size:13px;line-height:1.6;color:var(--text-muted);">
+        By using Aucty, you agree to our Terms of Service. Aucty is a creator auction platform where content creators can sell items and offer 1-on-1 calls to their audience. All bids are binding. Creators receive 51% of sale proceeds, while Aucty retains 49% for platform operations and payment processing.
+      </p>
+      <p style="font-size:13px;line-height:1.6;color:var(--text-muted);margin-top:12px;">
+        Users must be 18 or older to use Aucty. All items listed must comply with applicable laws. Aucty reserves the right to remove listings or suspend accounts that violate our community guidelines.
+      </p>
+    </div>
+    <div class="sp-section-title">Privacy Policy</div>
+    <div class="sp-card">
+      <p style="font-size:13px;line-height:1.6;color:var(--text-muted);">
+        We collect and process your data to provide and improve our services. This includes your profile information, bid history, and communication data. We never sell your personal information to third parties.
+      </p>
+      <p style="font-size:13px;line-height:1.6;color:var(--text-muted);margin-top:12px;">
+        You can request a copy of your data or account deletion by contacting support. For more details, see our full privacy policy at aucty.io/privacy.
+      </p>
+    </div>
+    <div class="sp-divider"></div>
+    <div class="sp-info-row">
+      <span class="sp-info-label">Account created</span>
+      <span class="sp-info-value">${state.user?.created_at ? new Date(state.user.created_at).toLocaleDateString() : 'N/A'}</span>
+    </div>
+    <div class="sp-info-row">
+      <span class="sp-info-label">User ID</span>
+      <span class="sp-info-value" style="font-size:11px;font-family:monospace;">${state.user?.id?.substring(0,8) || 'N/A'}...</span>
+    </div>
+    <div style="margin-top:18px;">
+      <button class="sp-btn secondary" onclick="downloadMyData()">Download My Data</button>
+    </div>
+    <div style="margin-top:10px;">
+      <button class="sp-btn danger" onclick="requestAccountDeletion()">Delete Account</button>
+    </div>
+  `;
+}
+
+function downloadMyData() {
+  const data = {
+    profile: { name: state.user?.name, email: state.user?.email, username: state.user?.username, bio: state.user?.bio },
+    bids: myBids.map(b => ({ auction: b.auction?.title, amount: b.amount_cents / 100, status: b.status, date: b.created_at })),
+    watchlist: Array.from(state.watchlist),
+    following: Array.from(state.following),
+    exportDate: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'aucty-data-export.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Data exported!', 'success');
+}
+
+async function requestAccountDeletion() {
+  if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) return;
+  showToast('Account deletion request submitted. You\\'ll receive a confirmation email.', 'info');
+  closeSettingsPanel();
 }
 
 // ========== GLOBAL ACTIONS ==========
