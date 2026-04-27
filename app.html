@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Aucty — Creator Auction Platform</title>
-<meta name="description" content="Live creator auction platform — bid, message, and follow your favorite creators." />
+<title>Aucty â Creator Auction Platform</title>
+<meta name="description" content="Live creator auction platform â bid, message, and follow your favorite creators." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1223,7 +1223,7 @@ textarea.sp-input { min-height: 80px; resize: vertical; font-family: inherit; }
   overflow: hidden;
 }
 .sp-avatar-upload:hover::after {
-  content: '📷';
+  content: 'ð·';
   position: absolute; inset: 0;
   background: rgba(0,0,0,0.5);
   display: grid; place-items: center;
@@ -1767,12 +1767,19 @@ textarea.sp-input { min-height: 80px; resize: vertical; font-family: inherit; }
 <div id="app"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://js.stripe.com/v3/"></script>
 
 <script>
 // ========== SUPABASE INIT ==========
 const SUPABASE_URL = 'https://jbbjqgqljvylrycdeuwj.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpiYmpxZ3FsanZ5bHJ5Y2RldXdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNDM2NTUsImV4cCI6MjA5MTcxOTY1NX0.5KoEVwkjAYILudAXKG__ALhSLkittRk6Zz7LXX1BFxo';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ========== STRIPE INIT ==========
+const STRIPE_PK = 'pk_live_51SSh0PD4moBZ1enAe5mCxu6g9G07SPNF4ptrjUSVgJbS9QHkNFICALPtDq4SyzMpUhNgLiuOT7jO3F2BWOmcfePF009790P642';
+const stripe = typeof Stripe !== 'undefined' ? Stripe(STRIPE_PK) : null;
+let stripeElements = null;
+let stripeCardElement = null;
 
 // ========== APP STATE ==========
 const state = {
@@ -1822,13 +1829,13 @@ const categories = [
   { id: 'music', label: 'Music', icon: '\u{1F3B5}' },
   { id: 'collectibles', label: 'Collectibles', icon: '\u{1F48E}' },
   { id: 'photography', label: 'Photography', icon: '\u{1F4F8}' },
-  { id: 'watches', label: 'Watches', icon: '⌚' },
+  { id: 'watches', label: 'Watches', icon: 'â' },
   { id: 'sneakers', label: 'Sneakers', icon: '\u{1F45F}' },
   { id: 'cards', label: 'Cards', icon: '\u{1F0CF}' },
-  { id: 'sports', label: 'Sports', icon: '⚽' }
+  { id: 'sports', label: 'Sports', icon: 'â½' }
 ];
 
-const categoryEmojis = { art:'\u{1F3A8}', fashion:'\u{1F457}', tech:'\u{1F4BB}', gaming:'\u{1F3AE}', music:'\u{1F3B5}', collectibles:'\u{1F48E}', photography:'\u{1F4F7}', watches:'⌚', sneakers:'\u{1F45F}', cards:'\u{1F0CF}', sports:'⚽', other:'\u{1F4E6}' };
+const categoryEmojis = { art:'\u{1F3A8}', fashion:'\u{1F457}', tech:'\u{1F4BB}', gaming:'\u{1F3AE}', music:'\u{1F3B5}', collectibles:'\u{1F48E}', photography:'\u{1F4F7}', watches:'â', sneakers:'\u{1F45F}', cards:'\u{1F0CF}', sports:'â½', other:'\u{1F4E6}' };
 
 // ========== UTILITY ==========
 function $(sel) { return document.querySelector(sel); }
@@ -2304,7 +2311,7 @@ function renderTopNav() {
             ${unreadNotifCount > 0 ? '<span class="badge">' + unreadNotifCount + '</span>' : ''}
           </button>
           <button class="nav-icon-btn" onclick="toggleDarkMode()" title="Toggle theme" id="themeBtn">
-            ${state.darkMode ? '☀️' : '\u{1F319}'}
+            ${state.darkMode ? 'âï¸' : '\u{1F319}'}
           </button>
           <button class="nav-avatar" onclick="navigateTo('profile')" title="Profile">
             ${state.user?.initials || 'C'}
@@ -2330,7 +2337,7 @@ function renderSidebar() {
           ${myBids.filter(b => b.status === 'winning' || b.status === 'active').length > 0 ? '<span class="sidebar-badge">' + myBids.filter(b => b.status === 'winning' || b.status === 'active').length + '</span>' : ''}
         </div>
         <div class="sidebar-item ${state.currentPage === 'watchlist' ? 'active' : ''}" onclick="navigateTo('watchlist')">
-          <span class="icon">❤️</span> Watchlist
+          <span class="icon">â¤ï¸</span> Watchlist
         </div>
         <div class="sidebar-item ${state.currentPage === 'messages' ? 'active' : ''}" onclick="navigateTo('messages')">
           <span class="icon">\u{1F4AC}</span> Messages
@@ -2340,7 +2347,7 @@ function renderSidebar() {
           <span class="icon">\u{1F464}</span> Profile
         </div>
         <div class="sidebar-item ${state.currentPage === 'settings' ? 'active' : ''}" onclick="navigateTo('settings')">
-          <span class="icon">⚙️</span> Settings
+          <span class="icon">âï¸</span> Settings
         </div>
       </div>
 
@@ -2417,7 +2424,7 @@ function renderDiscover() {
             <h2 style="margin-top:8px;">Creators are going live</h2>
             <p>${liveAuctions.length} live streams happening right now. Watch sellers show items up close and bid in real time.</p>
           </div>
-          ${state.user ? '<button class="golive-btn" onclick="openGoLive()">● Go Live</button>' : ''}
+          ${state.user ? '<button class="golive-btn" onclick="openGoLive()">â Go Live</button>' : ''}
         </div>
         <div class="live-streams-row">
           ${liveAuctions.slice(0, 5).map(a => `
@@ -2431,7 +2438,7 @@ function renderDiscover() {
                   <div class="stream-creator">
                     <div class="stream-creator-ava" style="background:${a.creator.avatar}">${a.creator.initials}</div>
                     <span class="stream-creator-name">${a.creator.name}</span>
-                    ${a.creator.verified ? '<span class="stream-creator-verified">✓</span>' : ''}
+                    ${a.creator.verified ? '<span class="stream-creator-verified">â</span>' : ''}
                   </div>
                   <div class="stream-title">${a.title}</div>
                   <span class="stream-category">${categories.find(c => c.id === a.category)?.label || a.category}</span>
@@ -2445,12 +2452,12 @@ function renderDiscover() {
     ` : (state.user ? `
     <div class="golive-cta-banner">
       <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-        <div style="font-size:36px;">📡</div>
+        <div style="font-size:36px;">ð¡</div>
         <div style="flex:1;min-width:200px;">
           <div style="font-weight:700;font-size:16px;">No one is live right now</div>
-          <div style="color:var(--text-secondary);font-size:13px;margin-top:2px;">Be the first to start streaming — show off your items and connect with buyers in real time.</div>
+          <div style="color:var(--text-secondary);font-size:13px;margin-top:2px;">Be the first to start streaming â show off your items and connect with buyers in real time.</div>
         </div>
-        <button class="golive-btn" onclick="openGoLive()">● Go Live</button>
+        <button class="golive-btn" onclick="openGoLive()">â Go Live</button>
       </div>
     </div>
     ` : '')}
@@ -2468,7 +2475,7 @@ function renderDiscover() {
     ${auctions.length > 0 ? `
     <div class="section-header">
       <h2 class="section-title">\u{1F525} Trending Drops</h2>
-      <a class="section-see-all" href="#">See all →</a>
+      <a class="section-see-all" href="#">See all â</a>
     </div>
     <div class="trending-list">
       ${auctions.slice(0, 5).map((a, i) => `
@@ -2479,7 +2486,7 @@ function renderDiscover() {
           </div>
           <div class="trending-info">
             <div class="trending-title">${a.title}</div>
-            <div class="trending-creator">${a.creator.name} ${a.creator.verified ? '✓' : ''}</div>
+            <div class="trending-creator">${a.creator.name} ${a.creator.verified ? 'â' : ''}</div>
           </div>
           <div class="trending-price">
             <div class="trending-price-val">${formatPrice(a.price)}</div>
@@ -2493,15 +2500,15 @@ function renderDiscover() {
     <!-- Creator Spotlight -->
     ${creators.length > 0 ? `
     <div class="section-header">
-      <h2 class="section-title">⭐ Creator Spotlight</h2>
-      <a class="section-see-all" href="#">See all →</a>
+      <h2 class="section-title">â­ Creator Spotlight</h2>
+      <a class="section-see-all" href="#">See all â</a>
     </div>
     <div class="creator-row">
       ${creators.map(c => `
         <div class="creator-card" onclick="viewCreator('${c.id}')" style="cursor:pointer;">
           <div class="creator-ava-lg" style="background:${c.avatar}">
             ${c.initials}
-            ${c.verified ? '<span class="verified-badge">✓</span>' : ''}
+            ${c.verified ? '<span class="verified-badge">â</span>' : ''}
           </div>
           <div class="creator-name-lg">${c.name}</div>
           <div class="creator-handle">${c.handle}</div>
@@ -2543,19 +2550,19 @@ function renderAuctionCard(a) {
       <div class="auction-img">
         <div class="auction-img-placeholder" style="background:linear-gradient(135deg, ${a.creator.avatar}15, ${a.creator.avatar}30);">${a.imageUrl ? '<img src="' + a.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">' : a.image}</div>
         <div class="auction-badges">
-          ${a.badge === 'live' ? '<span class="auction-badge badge-live">● LIVE</span>' : ''}
+          ${a.badge === 'live' ? '<span class="auction-badge badge-live">â LIVE</span>' : ''}
           ${a.badge === 'hot' ? '<span class="auction-badge badge-hot">\u{1F525} HOT</span>' : ''}
-          ${a.badge === 'ending' ? '<span class="auction-badge badge-ending">⏱ ENDING</span>' : ''}
+          ${a.badge === 'ending' ? '<span class="auction-badge badge-ending">â± ENDING</span>' : ''}
           ${a.badge === 'new' ? '<span class="auction-badge badge-new">NEW</span>' : ''}
         </div>
         <button class="auction-heart ${isWatched ? 'liked' : ''}" onclick="event.stopPropagation(); toggleWatchlist('${a.id}')">
-          ${isWatched ? '❤️' : '\u{1F90D}'}
+          ${isWatched ? 'â¤ï¸' : '\u{1F90D}'}
         </button>
       </div>
       <div class="auction-body">
         <div class="auction-creator-row">
           <div class="auction-creator-ava" style="background:${a.creator.avatar}">${a.creator.initials}</div>
-          <span class="auction-creator-name">${a.creator.name} ${a.creator.verified ? '✓' : ''}</span>
+          <span class="auction-creator-name">${a.creator.name} ${a.creator.verified ? 'â' : ''}</span>
         </div>
         <div class="auction-title">${a.title}</div>
         <div class="auction-price-row">
@@ -2563,9 +2570,9 @@ function renderAuctionCard(a) {
             <div class="auction-price-label">Current bid</div>
             <div class="auction-price">${formatPrice(a.price)}</div>
           </div>
-          <div class="auction-timer">⏱ ${a.timeLeft}</div>
+          <div class="auction-timer">â± ${a.timeLeft}</div>
         </div>
-        <div class="auction-bids">${a.bids} bids · ${a.viewers?.toLocaleString() || 0} watching</div>
+        <div class="auction-bids">${a.bids} bids Â· ${a.viewers?.toLocaleString() || 0} watching</div>
         <button class="auction-bid-btn" onclick="event.stopPropagation(); openDetail('${a.id}')">Place Bid</button>
       </div>
     </div>
@@ -2601,11 +2608,12 @@ function renderBids() {
         </div>
         <div class="bid-info">
           <div class="bid-title">${b.auction.title}</div>
-          <div class="bid-seller">${b.auction.creator.name} · ${b.time}</div>
+          <div class="bid-seller">${b.auction.creator.name} Â· ${b.time}</div>
         </div>
         <div>
           <div class="bid-amount" style="color:var(--text);">${formatPrice(b.amount)}</div>
           <div class="bid-status ${b.status}">${b.status === 'winning' || b.status === 'active' ? '\u{1F7E2} Winning' : b.status === 'outbid' ? '\u{1F534} Outbid' : '\u{1F7E3} Won'}</div>
+          ${b.status === 'won' ? '<button style="margin-top:6px;padding:6px 14px;border-radius:999px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;font-size:11px;font-weight:700;border:none;cursor:pointer;" onclick="event.stopPropagation();openCheckout(\x27' + b.auction.id + '\x27,' + b.amount + ')">Pay Now</button>' : ''}
         </div>
       </div>
     `).join('')}
@@ -2635,7 +2643,7 @@ function renderMessages() {
           <div class="message-item ${chatIdx === i ? 'active' : ''}" data-chat="${i}">
             <div class="message-ava" style="background:${c.user.avatar}">${c.user.initials}</div>
             <div class="message-info">
-              <div class="message-name">${c.user.name} ${c.user.verified ? '✓' : ''}</div>
+              <div class="message-name">${c.user.name} ${c.user.verified ? 'â' : ''}</div>
               <div class="message-preview">${c.lastMsg}</div>
             </div>
             <div class="message-meta">
@@ -2660,7 +2668,7 @@ function renderMessages() {
         </div>
         <div class="chat-input-row">
           <input class="chat-input" type="text" placeholder="Type a message..." id="chatMsgInput">
-          <button class="chat-send-btn" id="chatSendBtn">➤</button>
+          <button class="chat-send-btn" id="chatSendBtn">â¤</button>
         </div>
       </div>
     </div>
@@ -2672,12 +2680,12 @@ function renderWatchlist() {
   const watched = auctions.filter(a => state.watchlist.has(a.id));
   return `
     <div class="section-header">
-      <h2 class="section-title">❤️ Watchlist</h2>
+      <h2 class="section-title">â¤ï¸ Watchlist</h2>
       <span style="font-size:13px; color:var(--text-muted);">${watched.length} items</span>
     </div>
     ${watched.length === 0 ? `
       <div class="empty-state">
-        <div class="icon">❤️</div>
+        <div class="icon">â¤ï¸</div>
         <h3>Your watchlist is empty</h3>
         <p>Heart items to add them to your watchlist and track their progress.</p>
       </div>
@@ -2711,7 +2719,7 @@ function renderProfile() {
           </div>
           <div class="profile-actions">
             <button class="profile-edit-btn">Edit Profile</button>
-            <button class="profile-edit-btn" onclick="navigateTo('settings')">⚙️ Settings</button>
+            <button class="profile-edit-btn" onclick="navigateTo('settings')">âï¸ Settings</button>
           </div>
         </div>
       </div>
@@ -2745,63 +2753,63 @@ function renderSettings() {
         <div class="settings-group-title">Account</div>
         <div class="settings-item" onclick="openSettingsPanel('editProfile')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F464}</div><div><div class="settings-item-label">Edit Profile</div><div class="settings-item-desc">Name, bio, avatar</div></div></div>
-          <span class="settings-arrow">›</span>
+          <span class="settings-arrow">âº</span>
         </div>
         <div class="settings-item" onclick="openSettingsPanel('email')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F4E7}</div><div><div class="settings-item-label">Email</div><div class="settings-item-desc">${state.user?.email || ''}</div></div></div>
-          <span class="settings-arrow">›</span>
+          <span class="settings-arrow">âº</span>
         </div>
         <div class="settings-item" onclick="openSettingsPanel('password')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F512}</div><div><div class="settings-item-label">Password & Security</div><div class="settings-item-desc">2FA, password change</div></div></div>
-          <span class="settings-arrow">›</span>
+          <span class="settings-arrow">âº</span>
         </div>
       </div>
       <div class="settings-group">
         <div class="settings-group-title">Preferences</div>
         <div class="settings-item" onclick="toggleDarkMode()">
-          <div class="settings-item-left"><div class="settings-item-icon">${state.darkMode ? '☀️' : '\u{1F319}'}</div><div><div class="settings-item-label">Dark Mode</div><div class="settings-item-desc">Switch between light and dark themes</div></div></div>
+          <div class="settings-item-left"><div class="settings-item-icon">${state.darkMode ? 'âï¸' : '\u{1F319}'}</div><div><div class="settings-item-label">Dark Mode</div><div class="settings-item-desc">Switch between light and dark themes</div></div></div>
           <div class="toggle ${state.darkMode ? 'active' : ''}"></div>
         </div>
         <div class="settings-item" onclick="openSettingsPanel('notifications')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F514}</div><div><div class="settings-item-label">Notifications</div><div class="settings-item-desc">Push, email, SMS</div></div></div>
-          <span class="settings-arrow">›</span>
+          <span class="settings-arrow">âº</span>
         </div>
       </div>
       <div class="settings-group">
         <div class="settings-group-title">Payments</div>
         <div class="settings-item" onclick="openSettingsPanel('paymentMethods')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F4B3}</div><div><div class="settings-item-label">Payment Methods</div><div class="settings-item-desc">Add or manage cards</div></div></div>
-          <span class="settings-arrow">›</span>
+          <span class="settings-arrow">âº</span>
         </div>
         <div class="settings-item" onclick="openSettingsPanel('transactions')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F4DC}</div><div><div class="settings-item-label">Transaction History</div><div class="settings-item-desc">View past purchases</div></div></div>
-          <span class="settings-arrow">›</span>
+          <span class="settings-arrow">âº</span>
         </div>
       </div>
       <div class="settings-group">
         <div class="settings-group-title">Selling</div>
         <div class="settings-item" onclick="openSettingsPanel('becomeCreator')">
-          <div class="settings-item-left"><div class="settings-item-icon">✅</div><div><div class="settings-item-label">Become a Creator</div><div class="settings-item-desc">Get verified and start selling</div></div></div>
-          <span class="settings-arrow">›</span>
+          <div class="settings-item-left"><div class="settings-item-icon">â</div><div><div class="settings-item-label">Become a Creator</div><div class="settings-item-desc">Get verified and start selling</div></div></div>
+          <span class="settings-arrow">âº</span>
         </div>
         <div class="settings-item" onclick="openSettingsPanel('sellerDashboard')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F4CA}</div><div><div class="settings-item-label">Seller Dashboard</div><div class="settings-item-desc">Revenue, analytics, orders</div></div></div>
-          <span class="settings-arrow">›</span>
+          <span class="settings-arrow">âº</span>
         </div>
       </div>
       <div class="settings-group">
         <div class="settings-group-title">Support</div>
         <div class="settings-item" onclick="openSettingsPanel('helpCenter')">
-          <div class="settings-item-left"><div class="settings-item-icon">❓</div><div><div class="settings-item-label">Help Center</div><div class="settings-item-desc">FAQ & support</div></div></div>
-          <span class="settings-arrow">›</span>
+          <div class="settings-item-left"><div class="settings-item-icon">â</div><div><div class="settings-item-label">Help Center</div><div class="settings-item-desc">FAQ & support</div></div></div>
+          <span class="settings-arrow">âº</span>
         </div>
         <div class="settings-item" onclick="openSettingsPanel('terms')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F4C4}</div><div><div class="settings-item-label">Terms & Privacy</div><div class="settings-item-desc">Legal information</div></div></div>
-          <span class="settings-arrow">›</span>
+          <span class="settings-arrow">âº</span>
         </div>
         <div class="settings-item" onclick="logout()">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F6AA}</div><div><div class="settings-item-label" style="color:var(--red);">Sign Out</div><div class="settings-item-desc">Log out of your account</div></div></div>
-          <span class="settings-arrow">›</span>
+          <span class="settings-arrow">âº</span>
         </div>
       </div>
     </div>
@@ -2827,11 +2835,11 @@ function renderAuctionDetail(auctionId) {
             </div>
           </div>
           <div class="detail-content">
-            <button class="detail-close" onclick="closeDetail()">✕</button>
+            <button class="detail-close" onclick="closeDetail()">â</button>
             <div class="detail-creator-row">
               <div class="detail-creator-ava" style="background:${a.creator.avatar}">${a.creator.initials}</div>
               <div>
-                <div class="detail-creator-name">${a.creator.name} ${a.creator.verified ? '✓' : ''}</div>
+                <div class="detail-creator-name">${a.creator.name} ${a.creator.verified ? 'â' : ''}</div>
                 <div class="detail-creator-sub">${a.creator.followers} followers</div>
               </div>
             </div>
@@ -2846,7 +2854,7 @@ function renderAuctionDetail(auctionId) {
               </div>
             </div>
             <div class="detail-meta">
-              <div class="detail-meta-item">⏱ ${a.timeLeft} left</div>
+              <div class="detail-meta-item">â± ${a.timeLeft} left</div>
               <div class="detail-meta-item">\u{1F465} ${a.bids} bids</div>
               <div class="detail-meta-item">\u{1F441} ${a.viewers?.toLocaleString() || '0'} watching</div>
               <div class="detail-meta-item">\u{1F4B0} Started at ${formatPrice(a.startPrice)}</div>
@@ -2951,12 +2959,12 @@ function renderGoLivePicker() {
           <div style="font-size:20px;font-weight:800;">Go Live</div>
           <div style="font-size:13px;color:var(--text-secondary);">Choose a listing to feature in your broadcast</div>
         </div>
-        <button onclick="closeGoLive()" style="width:36px;height:36px;border-radius:50%;background:var(--bg-hover);display:grid;place-items:center;font-size:18px;color:var(--text-secondary);">✕</button>
+        <button onclick="closeGoLive()" style="width:36px;height:36px;border-radius:50%;background:var(--bg-hover);display:grid;place-items:center;font-size:18px;color:var(--text-secondary);">â</button>
       </div>
       ${displayAuctions.length === 0 ? '<div style="text-align:center;padding:30px;color:var(--text-muted);">No active listings. Create an auction first!</div>' : displayAuctions.map(a => `
         <div class="golive-auction-item" onclick="startBroadcast('${a.id}')">
           <div style="width:56px;height:56px;border-radius:var(--radius-sm);overflow:hidden;flex-shrink:0;">
-            ${a.imageUrl ? '<img src="' + a.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">' : '<div style="width:100%;height:100%;display:grid;place-items:center;font-size:24px;background:var(--bg-hover);">' + (a.emoji || '🎨') + '</div>'}
+            ${a.imageUrl ? '<img src="' + a.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">' : '<div style="width:100%;height:100%;display:grid;place-items:center;font-size:24px;background:var(--bg-hover);">' + (a.emoji || 'ð¨') + '</div>'}
           </div>
           <div style="flex:1;min-width:0;">
             <div style="font-weight:700;font-size:14px;">${a.title}</div>
@@ -2981,16 +2989,16 @@ function renderGoLiveBroadcast() {
       <div class="golive-stage">
         <div class="live-indicator">
           <span class="live-tag"><span class="dot"></span> LIVE</span>
-          <span style="color:rgba(255,255,255,0.7);font-size:13px;">👁 ${state.goLiveViewers} viewers</span>
+          <span style="color:rgba(255,255,255,0.7);font-size:13px;">ð ${state.goLiveViewers} viewers</span>
         </div>
         <div style="text-align:center;color:rgba(255,255,255,0.4);">
-          <div style="font-size:64px;margin-bottom:16px;">📹</div>
+          <div style="font-size:64px;margin-bottom:16px;">ð¹</div>
           <div style="font-size:15px;font-weight:600;">Camera Preview</div>
           <div style="font-size:13px;margin-top:4px;">Your camera feed would appear here</div>
         </div>
         <div class="pinned-listing">
           <div style="width:50px;height:50px;border-radius:var(--radius-sm);overflow:hidden;flex-shrink:0;">
-            ${a.imageUrl ? '<img src="' + a.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">' : '<div style="width:100%;height:100%;display:grid;place-items:center;font-size:22px;background:rgba(255,255,255,0.1);">' + (a.emoji || '🎨') + '</div>'}
+            ${a.imageUrl ? '<img src="' + a.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">' : '<div style="width:100%;height:100%;display:grid;place-items:center;font-size:22px;background:rgba(255,255,255,0.1);">' + (a.emoji || 'ð¨') + '</div>'}
           </div>
           <div style="flex:1;min-width:0;">
             <div style="font-weight:700;font-size:14px;color:#fff;">${a.title}</div>
@@ -2998,8 +3006,8 @@ function renderGoLiveBroadcast() {
           </div>
         </div>
         <div class="golive-controls">
-          <button onclick="state.goLiveMuted=!state.goLiveMuted;render();" style="background:${state.goLiveMuted ? 'var(--red)' : 'rgba(255,255,255,0.15)'};color:#fff;">${state.goLiveMuted ? '🔇' : '🎙'}</button>
-          <button style="background:rgba(255,255,255,0.15);color:#fff;">🔄</button>
+          <button onclick="state.goLiveMuted=!state.goLiveMuted;render();" style="background:${state.goLiveMuted ? 'var(--red)' : 'rgba(255,255,255,0.15)'};color:#fff;">${state.goLiveMuted ? 'ð' : 'ð'}</button>
+          <button style="background:rgba(255,255,255,0.15);color:#fff;">ð</button>
           <button onclick="endBroadcast()" style="background:var(--red);color:#fff;width:56px;height:56px;font-size:16px;font-weight:800;">END</button>
         </div>
       </div>
@@ -3187,7 +3195,7 @@ function renderSettingsPanel() {
 function renderEditProfilePanel() {
   const u = state.user;
   return `
-    <div class="sp-header"><h3>Edit Profile</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div class="sp-header"><h3>Edit Profile</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
     <div class="sp-avatar-upload" onclick="$('#avatarFileInput').click()" title="Change avatar">
       ${u?.initials || 'C'}
     </div>
@@ -3260,7 +3268,7 @@ async function saveProfile() {
 
 function renderEmailPanel() {
   return `
-    <div class="sp-header"><h3>Email Settings</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div class="sp-header"><h3>Email Settings</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
     <div class="sp-info-row">
       <span class="sp-info-label">Current email</span>
       <span class="sp-info-value">${state.user?.email || 'Not set'}</span>
@@ -3288,7 +3296,7 @@ async function changeEmail() {
 
 function renderPasswordPanel() {
   return `
-    <div class="sp-header"><h3>Password & Security</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div class="sp-header"><h3>Password & Security</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
     <div class="sp-section-title">Change Password</div>
     <div class="sp-field">
       <div class="sp-label">New Password</div>
@@ -3339,7 +3347,7 @@ async function signOutAllSessions() {
 function renderNotificationsPanel() {
   const p = state.notifPrefs;
   return `
-    <div class="sp-header"><h3>Notifications</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div class="sp-header"><h3>Notifications</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
     <div class="sp-section-title">Channels</div>
     <div class="sp-toggle-row">
       <div><div class="sp-toggle-label">Push Notifications</div><div class="sp-toggle-desc">Get notified on your device</div></div>
@@ -3379,51 +3387,58 @@ function toggleNotifPref(key) {
 function renderPaymentMethodsPanel() {
   return `
     <div class="sp-header"><h3>Payment Methods</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
-    <div class="sp-empty">
-      <div style="font-size:48px;margin-bottom:12px;">\u{1F4B3}</div>
-      <p>No payment methods added yet.</p>
-      <p style="margin-top:8px;font-size:12px;color:var(--text-muted);">Payment integration via Stripe is coming soon. You'll be able to add cards and manage your billing here.</p>
-    </div>
-    <div class="sp-divider"></div>
-    <div class="sp-field">
-      <div class="sp-label">Card Number</div>
-      <input class="sp-input" id="spCardNumber" placeholder="4242 4242 4242 4242" maxlength="19" oninput="formatCardNumber(this)">
-    </div>
-    <div style="display:flex;gap:12px;">
-      <div class="sp-field" style="flex:1;">
-        <div class="sp-label">Expiry</div>
-        <input class="sp-input" id="spCardExpiry" placeholder="MM/YY" maxlength="5">
+    <div style="padding:16px 0;">
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Add a card below. Your details are securely handled by Stripe and never touch our servers.</p>
+      <div class="sp-field">
+        <div class="sp-label">Card Details</div>
+        <div id="stripe-card-element" style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px;background:var(--bg-card);min-height:44px;"></div>
       </div>
-      <div class="sp-field" style="flex:1;">
-        <div class="sp-label">CVC</div>
-        <input class="sp-input" id="spCardCVC" placeholder="123" maxlength="4">
+      <div id="stripe-card-errors" style="color:#ef4444;font-size:12px;margin-top:6px;min-height:18px;"></div>
+      <button class="sp-btn" onclick="saveStripeCard()" id="stripe-save-btn">Save Card</button>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:12px;font-size:11px;color:var(--text-muted);">
+        🔒 Secured by Stripe
       </div>
     </div>
-    <button class="sp-btn" onclick="addPaymentMethod()">Add Card</button>
   `;
 }
 
-function formatCardNumber(input) {
-  let v = input.value.replace(/\\s/g, '').replace(/[^0-9]/g, '');
-  v = v.match(/.{1,4}/g)?.join(' ') || v;
-  input.value = v;
+function mountStripeCardElement() {
+  if (!stripe) return;
+  setTimeout(() => {
+    const container = document.getElementById('stripe-card-element');
+    if (!container) return;
+    stripeElements = stripe.elements();
+    stripeCardElement = stripeElements.create('card', {
+      style: {
+        base: { fontSize: '15px', color: '#1a1a2e', fontFamily: 'Inter, sans-serif', '::placeholder': { color: '#9ca3af' } },
+        invalid: { color: '#ef4444' }
+      }
+    });
+    stripeCardElement.mount('#stripe-card-element');
+    stripeCardElement.on('change', (e) => {
+      const errEl = document.getElementById('stripe-card-errors');
+      if (errEl) errEl.textContent = e.error ? e.error.message : '';
+    });
+  }, 100);
 }
 
-function addPaymentMethod() {
-  const num = $('#spCardNumber')?.value?.replace(/\\s/g, '');
-  const exp = $('#spCardExpiry')?.value;
-  const cvc = $('#spCardCVC')?.value;
-  if (!num || num.length < 15 || !exp || !cvc) {
-    showToast('Please fill in all card details', 'error'); return;
-  }
-  showToast('Card saved! (Stripe integration coming soon)', 'success');
-  closeSettingsPanel();
+async function saveStripeCard() {
+  if (!stripe || !stripeCardElement) { showToast('Stripe not loaded', 'error'); return; }
+  const btn = document.getElementById('stripe-save-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+  try {
+    const { token, error } = await stripe.createToken(stripeCardElement);
+    if (error) { showToast(error.message, 'error'); return; }
+    showToast('Card saved successfully!', 'success');
+    closeSettingsPanel();
+  } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+  finally { if (btn) { btn.disabled = false; btn.textContent = 'Save Card'; } }
 }
 
 function renderTransactionsPanel() {
   const bids = myBids.filter(b => b.status === 'won');
   return `
-    <div class="sp-header"><h3>Transaction History</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div class="sp-header"><h3>Transaction History</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
     ${bids.length === 0 ? `
       <div class="sp-empty">
         <div style="font-size:48px;margin-bottom:12px;">\u{1F4DC}</div>
@@ -3449,19 +3464,19 @@ function renderTransactionsPanel() {
 
 function renderBecomeCreatorPanel() {
   return `
-    <div class="sp-header"><h3>Become a Creator</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div class="sp-header"><h3>Become a Creator</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
     <div style="text-align:center;margin-bottom:20px;">
-      <div style="font-size:64px;margin-bottom:12px;">🌟</div>
+      <div style="font-size:64px;margin-bottom:12px;">ð</div>
       <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;">Start Selling on Aucty</h3>
       <p style="font-size:14px;color:var(--text-muted);">Join our creator community and auction your exclusive items, offer 1-on-1 calls, and build your brand.</p>
     </div>
     <div class="sp-divider"></div>
     <div class="sp-section-title">Benefits</div>
-    <div class="sp-card"><div style="font-size:14px;">✅ List unlimited auctions</div></div>
-    <div class="sp-card"><div style="font-size:14px;">💰 Earn 51% of every sale</div></div>
-    <div class="sp-card"><div style="font-size:14px;">📊 Access to analytics dashboard</div></div>
-    <div class="sp-card"><div style="font-size:14px;">📞 Offer paid 1-on-1 calls</div></div>
-    <div class="sp-card"><div style="font-size:14px;">⚡ Priority support</div></div>
+    <div class="sp-card"><div style="font-size:14px;">â List unlimited auctions</div></div>
+    <div class="sp-card"><div style="font-size:14px;">ð° Earn 51% of every sale</div></div>
+    <div class="sp-card"><div style="font-size:14px;">ð Access to analytics dashboard</div></div>
+    <div class="sp-card"><div style="font-size:14px;">ð Offer paid 1-on-1 calls</div></div>
+    <div class="sp-card"><div style="font-size:14px;">â¡ Priority support</div></div>
     <div class="sp-divider"></div>
     <div class="sp-field">
       <div class="sp-label">Creator Name / Brand</div>
@@ -3521,7 +3536,7 @@ function renderSellerDashboardPanel() {
   const myAuctions = auctions.filter(a => a.creator_id === state.user?.id);
   const totalRevenue = myBids.filter(b => b.status === 'won').reduce((sum, b) => sum + (b.amount_cents || 0), 0);
   return `
-    <div class="sp-header"><h3>Seller Dashboard</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div class="sp-header"><h3>Seller Dashboard</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">
       <div class="sp-card" style="text-align:center;">
         <div style="font-size:24px;font-weight:700;color:var(--brand);">${myAuctions.length}</div>
@@ -3563,16 +3578,16 @@ function renderHelpCenterPanel() {
     { q: 'How does the 51/49 split work?', a: 'Creators keep 51% of every sale, while Aucty retains 49% to cover platform fees, payment processing, and support.' },
     { q: 'Can I cancel a bid?', a: 'Bids are binding once placed. Make sure you\'re comfortable with the amount before bidding.' },
     { q: 'How do 1-on-1 calls work?', a: 'Some creators offer paid video calls. You can bid on call slots just like items. Once won, you\'ll receive scheduling details via messages.' },
-    { q: 'How do I become a creator?', a: 'Go to Settings → Become a Creator and fill out the application. We review applications within 48 hours.' },
+    { q: 'How do I become a creator?', a: 'Go to Settings â Become a Creator and fill out the application. We review applications within 48 hours.' },
     { q: 'What payment methods are accepted?', a: 'We support major credit/debit cards through Stripe. More payment options coming soon.' },
   ];
   return `
-    <div class="sp-header"><h3>Help Center</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div class="sp-header"><h3>Help Center</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
     <div class="sp-section-title">Frequently Asked Questions</div>
     ${faqs.map((f, i) => `
       <div class="sp-card" style="cursor:pointer;" onclick="this.querySelector('.faq-a').style.display=this.querySelector('.faq-a').style.display==='none'?'block':'none'">
         <div style="font-weight:600;font-size:14px;display:flex;justify-content:space-between;align-items:center;">
-          ${f.q} <span style="color:var(--text-muted);">▸</span>
+          ${f.q} <span style="color:var(--text-muted);">â¸</span>
         </div>
         <div class="faq-a" style="display:none;margin-top:10px;font-size:13px;color:var(--text-muted);line-height:1.5;">${f.a}</div>
       </div>
@@ -3601,7 +3616,7 @@ function submitSupportTicket() {
 
 function renderTermsPanel() {
   return `
-    <div class="sp-header"><h3>Terms & Privacy</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
+    <div class="sp-header"><h3>Terms & Privacy</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
     <div class="sp-section-title">Terms of Service</div>
     <div class="sp-card">
       <p style="font-size:13px;line-height:1.6;color:var(--text-muted);">
@@ -3789,6 +3804,2095 @@ async function placeBidLive(auctionId) {
   } catch(e) { showToast('Bid failed: ' + e.message, 'error'); }
 }
 
+// ========== STRIPE CHECKOUT ==========
+function openCheckout(auctionId, amount) {
+  if (!state.user) { showToast('Sign in to pay', 'error'); return; }
+  const a = auctions.find(x => x.id === auctionId);
+  if (!a) { showToast('Auction not found', 'error'); return; }
+  const shippingCost = 25;
+  const tax = Math.round(amount * 0.1 * 100) / 100;
+  const total = amount + shippingCost + tax;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'checkout-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;display:grid;place-items:center;backdrop-filter:blur(4px);';
+  overlay.innerHTML = '<div style="background:var(--bg-card);border-radius:var(--radius-xl);max-width:420px;width:90%;max-height:90vh;overflow-y:auto;padding:24px;position:relative;">'
+    + '<button onclick="closeCheckout()" style="position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;border:none;background:var(--bg-hover);cursor:pointer;font-size:16px;">\u2715</button>'
+    + '<h3 style="font-size:18px;font-weight:800;margin-bottom:16px;">Complete Payment</h3>'
+    + '<div style="display:flex;gap:12px;margin-bottom:16px;padding:12px;background:var(--bg-hover);border-radius:var(--radius-md);">'
+    + '<div style="width:60px;height:60px;border-radius:8px;background:linear-gradient(135deg,' + a.creator.avatar + '15,' + a.creator.avatar + '30);display:grid;place-items:center;font-size:24px;flex-shrink:0;">' + (a.imageUrl ? '<img src="' + a.imageUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">' : a.image) + '</div>'
+    + '<div><div style="font-weight:700;font-size:14px;">' + a.title + '</div><div style="font-size:12px;color:var(--text-muted);">by ' + a.creator.name + '</div></div></div>'
+    + '<div style="background:var(--bg-hover);border-radius:var(--radius-md);padding:12px;margin-bottom:16px;">'
+    + '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Item</span><span style="font-weight:700;">' + formatPrice(amount) + '</span></div>'
+    + '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Shipping</span><span style="font-weight:700;">
+const GOLIVE_NAMES = ['ArtLover99','BidQueen','NightOwl','PixelHunter','VintageVibes','CryptoKid','SneakerHead','DesignJunkie','MusicNerd','TechBro'];
+
+function openGoLive() {
+  if (!state.user) { openAuth(); return; }
+  state.showGoLive = true;
+  render();
+}
+
+function closeGoLive() {
+  state.showGoLive = false;
+  render();
+}
+
+function startBroadcast(auctionId) {
+  const auction = state.auctions.find(a => a.id === auctionId) || state.auctions[0];
+  if (!auction) return;
+  state.showGoLive = false;
+  state.goLiveAuction = auction;
+  state.goLiveViewers = Math.floor(Math.random() * 30) + 5;
+  state.goLiveChat = [{ user: 'System', text: 'You are now live! Viewers are joining...', type: 'system' }];
+  state.goLiveMuted = false;
+  render();
+
+  // Simulate chat activity
+  window.__goLiveInterval = setInterval(() => {
+    const rand = Math.random();
+    const name = GOLIVE_NAMES[Math.floor(Math.random() * GOLIVE_NAMES.length)];
+    if (rand < 0.4) {
+      const msgs = ['Love this!','How much is shipping?','Is this still available?','Amazing piece!','Can you show the back?','What material is this?','Fire ð¥','Need this!','Take my money ð¸','Beautiful work'];
+      state.goLiveChat.push({ user: name, text: msgs[Math.floor(Math.random() * msgs.length)] });
+    } else if (rand < 0.6) {
+      state.goLiveChat.push({ user: name, text: 'just joined', type: 'join' });
+      state.goLiveViewers += 1;
+    } else if (rand < 0.75) {
+      const amt = (parseFloat(auction.currentBid || auction.startingBid) + Math.floor(Math.random() * 50) + 10).toFixed(2);
+      state.goLiveChat.push({ user: name, text: 'placed a bid of $' + amt, type: 'bid' });
+    }
+    if (state.goLiveChat.length > 50) state.goLiveChat = state.goLiveChat.slice(-50);
+    render();
+  }, 2500);
+}
+
+function endBroadcast() {
+  clearInterval(window.__goLiveInterval);
+  state.goLiveAuction = null;
+  state.goLiveChat = [];
+  state.goLiveViewers = 0;
+  render();
+}
+
+function openCreateAuction() { state.showCreateAuction = true; state.createStep = 1; render(); }
+function closeCreateAuction() { state.showCreateAuction = false; render(); }
+
+// Image handling for create auction
+let selectedImages = [];
+function handleImageSelect(input) {
+  selectedImages = Array.from(input.files).slice(0, 10);
+  const preview = $('#imagePreview');
+  if (preview) {
+    preview.innerHTML = selectedImages.map((f, i) => `
+      <div style="width:60px;height:60px;border-radius:8px;overflow:hidden;border:1px solid var(--border);">
+        <img src="${URL.createObjectURL(f)}" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+    `).join('');
+  }
+}
+
+async function publishAuction() {
+  if (!state.user) return;
+
+  // Get form values (they may have been collected across steps - use stored values)
+  const title = window._createTitle || '';
+  const desc = window._createDesc || '';
+  const category = window._createCategory || '';
+  const price = window._createPrice || 0;
+  const duration = window._createDuration || 12;
+
+  if (!title || !category || !price) {
+    showToast('Please fill in all required fields', 'error');
+    return;
+  }
+
+  try {
+    // Upload images
+    let imageUrls = [];
+    for (const file of selectedImages) {
+      const ext = file.name.split('.').pop();
+      const path = state.user.id + '/' + Date.now() + '_' + Math.random().toString(36).substring(2) + '.' + ext;
+      const { error: uploadErr } = await sb.storage.from('auction-images').upload(path, file);
+      if (!uploadErr) {
+        const { data: urlData } = sb.storage.from('auction-images').getPublicUrl(path);
+        if (urlData) imageUrls.push(urlData.publicUrl);
+      }
+    }
+
+    const endsAt = new Date(Date.now() + duration * 3600000).toISOString();
+
+    const { error } = await sb.from('auctions').insert({
+      creator_id: state.user.id,
+      title: title,
+      description: desc,
+      category: category,
+      starting_price_cents: Math.round(price * 100),
+      ends_at: endsAt,
+      images: imageUrls,
+      status: 'active'
+    });
+    if (error) throw error;
+
+    state.showCreateAuction = false;
+    selectedImages = [];
+    window._createTitle = '';
+    window._createDesc = '';
+    window._createCategory = '';
+    window._createPrice = 0;
+    window._createDuration = 12;
+
+    showToast('Listing published! It is now live.', 'success');
+    await loadAuctions();
+    render();
+  } catch(e) { showToast('Publish failed: ' + e.message, 'error'); }
+}
+
+async function startConversation(creatorId) {
+  if (!state.user) return;
+  try {
+    // Check if conversation already exists
+    const { data: existing } = await sb.from('conversations')
+      .select('id')
+      .or('and(participant_1.eq.' + state.user.id + ',participant_2.eq.' + creatorId + '),and(participant_1.eq.' + creatorId + ',participant_2.eq.' + state.user.id + ')')
+      .single();
+
+    if (existing) {
+      // Switch to messages
+      const idx = conversations.findIndex(c => c.rawId === existing.id);
+      if (idx >= 0) state.selectedChat = idx;
+      navigateTo('messages');
+    } else {
+      // Create new conversation
+      const { data, error } = await sb.from('conversations').insert({
+        participant_1: state.user.id,
+        participant_2: creatorId
+      }).select().single();
+      if (error) throw error;
+      await loadConversations();
+      state.selectedChat = 0;
+      navigateTo('messages');
+    }
+  } catch(e) { showToast('Could not start conversation: ' + e.message, 'error'); }
+}
+
+async function logout() {
+  await sb.auth.signOut();
+  state.isAuthenticated = false;
+  state.user = null;
+  state.currentPage = 'discover';
+  document.body.classList.remove('dark-mode');
+  state.darkMode = false;
+  localStorage.removeItem('aucty-dark');
+  creators = [];
+  auctions = [];
+  conversations = [];
+  myBids = [];
+  render();
+}
+
+// ========== LIVE CHAT ==========
+let liveChatMessages = [];
+
+async function loadLiveChat(auctionId) {
+  try {
+    const { data } = await sb.from('auction_chat')
+      .select('*, profiles!auction_chat_user_id_fkey(username, display_name, avatar_url)')
+      .eq('auction_id', auctionId)
+      .order('created_at', { ascending: true })
+      .limit(50);
+
+    liveChatMessages = (data || []).map(m => ({
+      user: m.profiles?.display_name || m.profiles?.username || 'User',
+      ava: avatarColor(m.user_id),
+      text: m.content
+    }));
+
+    updateLiveChatUI();
+  } catch(e) { console.error('loadLiveChat:', e); }
+}
+
+function updateLiveChatUI() {
+  const area = $('#liveChatArea');
+  if (!area) return;
+  if (liveChatMessages.length === 0) {
+    area.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px;">No messages yet. Be the first to say something!</div>';
+    return;
+  }
+  area.innerHTML = liveChatMessages.map(m => `
+    <div class="live-chat-msg">
+      <div class="live-chat-ava" style="background:${m.ava}">${m.user[0].toUpperCase()}</div>
+      <div class="live-chat-body">
+        <div class="live-chat-name">${m.user}</div>
+        <div class="live-chat-text">${m.text}</div>
+      </div>
+    </div>
+  `).join('');
+  area.scrollTop = area.scrollHeight;
+}
+
+async function sendLiveChat(auctionId, text) {
+  if (!state.user || !text.trim()) return;
+  try {
+    const { error } = await sb.from('auction_chat').insert({
+      auction_id: auctionId,
+      user_id: state.user.id,
+      content: text.trim()
+    });
+    if (error) throw error;
+  } catch(e) { showToast('Failed to send message', 'error'); }
+}
+
+// ========== BIND APP EVENTS ==========
+function bindAppEvents() {
+  // Category pills
+  $$('.cat-pill, .nav-cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cat = btn.dataset.cat;
+      if (cat) {
+        state.selectedCategory = cat;
+        state.currentPage = 'discover';
+        render();
+      }
+    });
+  });
+
+  // Search
+  const searchInput = $('#searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      state.searchQuery = e.target.value;
+      if (state.currentPage === 'discover') {
+        const discoverPage = $('#page-discover');
+        if (discoverPage) discoverPage.innerHTML = renderDiscover();
+        $$('.cat-pill').forEach(btn => {
+          btn.addEventListener('click', () => {
+            state.selectedCategory = btn.dataset.cat;
+            render();
+          });
+        });
+      }
+    });
+  }
+
+  // Follow buttons
+  $$('.creator-follow-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.creator;
+      toggleFollow(id);
+    });
+  });
+
+  // Bid tabs
+  $$('[data-bid-tab]').forEach(tab => {
+    tab.addEventListener('click', () => {
+      state.bidTab = tab.dataset.bidTab;
+      render();
+    });
+  });
+
+  // Chat selection
+  $$('[data-chat]').forEach(item => {
+    item.addEventListener('click', () => {
+      state.selectedChat = parseInt(item.dataset.chat);
+      render();
+    });
+  });
+
+  // Chat send (DM)
+  const chatSend = $('#chatSendBtn');
+  const chatInput = $('#chatMsgInput');
+  if (chatSend && chatInput) {
+    const sendMsg = async () => {
+      const text = chatInput.value.trim();
+      if (!text || !state.user) return;
+      const conv = conversations[state.selectedChat];
+      if (!conv) return;
+
+      try {
+        const { error } = await sb.from('messages').insert({
+          conversation_id: conv.rawId,
+          sender_id: state.user.id,
+          content: text
+        });
+        if (error) throw error;
+
+        // Update conversation last_message_at
+        await sb.from('conversations').update({ last_message_at: new Date().toISOString() }).eq('id', conv.rawId);
+
+        // Optimistic update
+        conv.messages.push({ from: 'me', text });
+        conv.lastMsg = text;
+        conv.time = 'now';
+        chatInput.value = '';
+        render();
+        const chatArea = $('.chat-messages');
+        if (chatArea) chatArea.scrollTop = chatArea.scrollHeight;
+      } catch(e) { showToast('Failed to send message', 'error'); }
+    };
+    chatSend.addEventListener('click', sendMsg);
+    chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMsg(); });
+  }
+
+  // Live chat send
+  const liveSend = $('#liveChatSend');
+  const liveInput = $('#liveChatInput');
+  if (liveSend && liveInput && state.showLive) {
+    const sendLive = () => {
+      const text = liveInput.value.trim();
+      if (text) {
+        sendLiveChat(state.showLive, text);
+        liveInput.value = '';
+      }
+    };
+    liveSend.addEventListener('click', sendLive);
+    liveInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendLive(); });
+  }
+
+  // Detail overlay close
+  const overlay = $('#detailOverlay');
+  if (overlay) {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeDetail();
+    });
+  }
+
+  // Keyboard shortcuts
+  document.onkeydown = (e) => {
+    if (e.key === 'Escape' && state.showLive !== null) closeLive();
+    else if (e.key === 'Escape' && state.showAuctionDetail !== null) closeDetail();
+    else if (e.key === 'Escape' && state.showCreateAuction) closeCreateAuction();
+  };
+
+  // Store create auction form values when navigating steps
+  const titleInput = $('#createTitle');
+  const descInput = $('#createDesc');
+  const catInput = $('#createCategory');
+  const priceInput = $('#createPrice');
+  const durationInput = $('#createDuration');
+  if (titleInput) titleInput.addEventListener('input', (e) => { window._createTitle = e.target.value; });
+  if (descInput) descInput.addEventListener('input', (e) => { window._createDesc = e.target.value; });
+  if (catInput) catInput.addEventListener('change', (e) => { window._createCategory = e.target.value; });
+  if (priceInput) priceInput.addEventListener('input', (e) => { window._createPrice = parseFloat(e.target.value) || 0; });
+  if (durationInput) durationInput.addEventListener('change', (e) => { window._createDuration = parseInt(e.target.value) || 12; });
+}
+
+// ========== REALTIME SUBSCRIPTIONS ==========
+let realtimeChannel = null;
+
+function setupRealtime() {
+  if (realtimeChannel) realtimeChannel.unsubscribe();
+
+  realtimeChannel = sb.channel('aucty-realtime')
+    // New bids
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'bids' }, async (payload) => {
+      const bid = payload.new;
+      // If we were outbid, show notification
+      if (state.user && bid.bidder_id !== state.user.id) {
+        const a = auctions.find(x => x.id === bid.auction_id);
+        if (a && state.watchlist.has(bid.auction_id)) {
+          showToast('New bid on ' + a.title + ': ' + formatPrice(Math.round(bid.amount_cents / 100)), 'info');
+        }
+      }
+      // Reload auction data
+      await loadAuctions();
+      if (state.user) await loadMyBids();
+      render();
+      if (state.showAuctionDetail) openDetail(state.showAuctionDetail);
+      if (state.showLive) openLive(state.showLive);
+    })
+    // Auction updates
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'auctions' }, async () => {
+      await loadAuctions();
+      render();
+    })
+    // New messages
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async (payload) => {
+      const msg = payload.new;
+      if (state.user && msg.sender_id !== state.user.id) {
+        showToast('New message received!', 'info');
+        await loadConversations();
+        render();
+      }
+    })
+    // Live chat
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'auction_chat' }, async (payload) => {
+      const msg = payload.new;
+      if (state.showLive === msg.auction_id) {
+        // Fetch sender profile
+        const { data: profile } = await sb.from('profiles').select('display_name, username').eq('id', msg.user_id).single();
+        liveChatMessages.push({
+          user: profile?.display_name || profile?.username || 'User',
+          ava: avatarColor(msg.user_id),
+          text: msg.content
+        });
+        updateLiveChatUI();
+      }
+    })
+    // Notifications
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, async (payload) => {
+      if (state.user && payload.new.user_id === state.user.id) {
+        unreadNotifCount++;
+        showToast(payload.new.title || 'New notification', 'info');
+        render();
+      }
+    })
+    .subscribe();
+}
+
+// ========== COUNTDOWN TIMER ==========
+setInterval(() => {
+  // Refresh timeLeft for all auctions
+  auctions.forEach(a => {
+    if (a.endsAt) {
+      a.timeLeft = computeTimeLeft(a.endsAt);
+      a.badge = computeBadge(a.raw || {});
+    }
+  });
+  // Only re-render if on discover page to avoid interrupting other interactions
+  if (state.currentPage === 'discover' && !state.showAuctionDetail && !state.showLive && !state.showCreateAuction) {
+    const discoverPage = $('#page-discover');
+    if (discoverPage) discoverPage.innerHTML = renderDiscover();
+    // Rebind category pills
+    $$('.cat-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.selectedCategory = btn.dataset.cat;
+        render();
+      });
+    });
+  }
+}, 60000); // Every 60 seconds
+
+// ========== INIT ==========
+(async function init() {
+  // Check URL params for auth mode
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('mode') === 'signup') state.authMode = 'signup';
+  if (params.get('mode') === 'signin') state.authMode = 'signin';
+
+  // Apply dark mode from localStorage
+  if (state.darkMode) document.body.classList.add('dark-mode');
+
+  // Check for existing session
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    state.isAuthenticated = true;
+    state.user = {
+      id: session.user.id,
+      name: session.user.user_metadata?.display_name || session.user.email?.split('@')[0] || 'Collector',
+      username: session.user.user_metadata?.username || session.user.email?.split('@')[0] || 'collector',
+      email: session.user.email,
+      initials: getInitials(session.user.user_metadata?.display_name || session.user.email?.split('@')[0] || 'C')
+    };
+
+    render(); // Show app shell immediately
+
+    // Load data in background
+    await loadProfile();
+    await loadAllData();
+    setupRealtime();
+    render(); // Re-render with real data
+  } else {
+    render(); // Show auth screen
+  }
+
+  // Listen for auth state changes (handles OAuth redirects, etc.)
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      state.isAuthenticated = true;
+      state.user = {
+        id: session.user.id,
+        name: session.user.user_metadata?.display_name || session.user.email?.split('@')[0] || 'Collector',
+        username: session.user.user_metadata?.username || session.user.email?.split('@')[0] || 'collector',
+        email: session.user.email,
+        initials: getInitials(session.user.user_metadata?.display_name || session.user.email?.split('@')[0] || 'C')
+      };
+      state.loading = false;
+      render();
+
+      await loadProfile();
+      await loadAllData();
+      setupRealtime();
+      render();
+    } else if (event === 'SIGNED_OUT') {
+      state.isAuthenticated = false;
+      state.user = null;
+      state.loading = false;
+      if (realtimeChannel) realtimeChannel.unsubscribe();
+      render();
+    }
+  });
+})();
+
+</script>
+</body>
+</html>
+ + shippingCost + '</span></div>'
+    + '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;border-top:1px solid var(--border);padding-top:6px;"><span>Tax</span><span style="font-weight:700;">
+const GOLIVE_NAMES = ['ArtLover99','BidQueen','NightOwl','PixelHunter','VintageVibes','CryptoKid','SneakerHead','DesignJunkie','MusicNerd','TechBro'];
+
+function openGoLive() {
+  if (!state.user) { openAuth(); return; }
+  state.showGoLive = true;
+  render();
+}
+
+function closeGoLive() {
+  state.showGoLive = false;
+  render();
+}
+
+function startBroadcast(auctionId) {
+  const auction = state.auctions.find(a => a.id === auctionId) || state.auctions[0];
+  if (!auction) return;
+  state.showGoLive = false;
+  state.goLiveAuction = auction;
+  state.goLiveViewers = Math.floor(Math.random() * 30) + 5;
+  state.goLiveChat = [{ user: 'System', text: 'You are now live! Viewers are joining...', type: 'system' }];
+  state.goLiveMuted = false;
+  render();
+
+  // Simulate chat activity
+  window.__goLiveInterval = setInterval(() => {
+    const rand = Math.random();
+    const name = GOLIVE_NAMES[Math.floor(Math.random() * GOLIVE_NAMES.length)];
+    if (rand < 0.4) {
+      const msgs = ['Love this!','How much is shipping?','Is this still available?','Amazing piece!','Can you show the back?','What material is this?','Fire ð¥','Need this!','Take my money ð¸','Beautiful work'];
+      state.goLiveChat.push({ user: name, text: msgs[Math.floor(Math.random() * msgs.length)] });
+    } else if (rand < 0.6) {
+      state.goLiveChat.push({ user: name, text: 'just joined', type: 'join' });
+      state.goLiveViewers += 1;
+    } else if (rand < 0.75) {
+      const amt = (parseFloat(auction.currentBid || auction.startingBid) + Math.floor(Math.random() * 50) + 10).toFixed(2);
+      state.goLiveChat.push({ user: name, text: 'placed a bid of $' + amt, type: 'bid' });
+    }
+    if (state.goLiveChat.length > 50) state.goLiveChat = state.goLiveChat.slice(-50);
+    render();
+  }, 2500);
+}
+
+function endBroadcast() {
+  clearInterval(window.__goLiveInterval);
+  state.goLiveAuction = null;
+  state.goLiveChat = [];
+  state.goLiveViewers = 0;
+  render();
+}
+
+function openCreateAuction() { state.showCreateAuction = true; state.createStep = 1; render(); }
+function closeCreateAuction() { state.showCreateAuction = false; render(); }
+
+// Image handling for create auction
+let selectedImages = [];
+function handleImageSelect(input) {
+  selectedImages = Array.from(input.files).slice(0, 10);
+  const preview = $('#imagePreview');
+  if (preview) {
+    preview.innerHTML = selectedImages.map((f, i) => `
+      <div style="width:60px;height:60px;border-radius:8px;overflow:hidden;border:1px solid var(--border);">
+        <img src="${URL.createObjectURL(f)}" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+    `).join('');
+  }
+}
+
+async function publishAuction() {
+  if (!state.user) return;
+
+  // Get form values (they may have been collected across steps - use stored values)
+  const title = window._createTitle || '';
+  const desc = window._createDesc || '';
+  const category = window._createCategory || '';
+  const price = window._createPrice || 0;
+  const duration = window._createDuration || 12;
+
+  if (!title || !category || !price) {
+    showToast('Please fill in all required fields', 'error');
+    return;
+  }
+
+  try {
+    // Upload images
+    let imageUrls = [];
+    for (const file of selectedImages) {
+      const ext = file.name.split('.').pop();
+      const path = state.user.id + '/' + Date.now() + '_' + Math.random().toString(36).substring(2) + '.' + ext;
+      const { error: uploadErr } = await sb.storage.from('auction-images').upload(path, file);
+      if (!uploadErr) {
+        const { data: urlData } = sb.storage.from('auction-images').getPublicUrl(path);
+        if (urlData) imageUrls.push(urlData.publicUrl);
+      }
+    }
+
+    const endsAt = new Date(Date.now() + duration * 3600000).toISOString();
+
+    const { error } = await sb.from('auctions').insert({
+      creator_id: state.user.id,
+      title: title,
+      description: desc,
+      category: category,
+      starting_price_cents: Math.round(price * 100),
+      ends_at: endsAt,
+      images: imageUrls,
+      status: 'active'
+    });
+    if (error) throw error;
+
+    state.showCreateAuction = false;
+    selectedImages = [];
+    window._createTitle = '';
+    window._createDesc = '';
+    window._createCategory = '';
+    window._createPrice = 0;
+    window._createDuration = 12;
+
+    showToast('Listing published! It is now live.', 'success');
+    await loadAuctions();
+    render();
+  } catch(e) { showToast('Publish failed: ' + e.message, 'error'); }
+}
+
+async function startConversation(creatorId) {
+  if (!state.user) return;
+  try {
+    // Check if conversation already exists
+    const { data: existing } = await sb.from('conversations')
+      .select('id')
+      .or('and(participant_1.eq.' + state.user.id + ',participant_2.eq.' + creatorId + '),and(participant_1.eq.' + creatorId + ',participant_2.eq.' + state.user.id + ')')
+      .single();
+
+    if (existing) {
+      // Switch to messages
+      const idx = conversations.findIndex(c => c.rawId === existing.id);
+      if (idx >= 0) state.selectedChat = idx;
+      navigateTo('messages');
+    } else {
+      // Create new conversation
+      const { data, error } = await sb.from('conversations').insert({
+        participant_1: state.user.id,
+        participant_2: creatorId
+      }).select().single();
+      if (error) throw error;
+      await loadConversations();
+      state.selectedChat = 0;
+      navigateTo('messages');
+    }
+  } catch(e) { showToast('Could not start conversation: ' + e.message, 'error'); }
+}
+
+async function logout() {
+  await sb.auth.signOut();
+  state.isAuthenticated = false;
+  state.user = null;
+  state.currentPage = 'discover';
+  document.body.classList.remove('dark-mode');
+  state.darkMode = false;
+  localStorage.removeItem('aucty-dark');
+  creators = [];
+  auctions = [];
+  conversations = [];
+  myBids = [];
+  render();
+}
+
+// ========== LIVE CHAT ==========
+let liveChatMessages = [];
+
+async function loadLiveChat(auctionId) {
+  try {
+    const { data } = await sb.from('auction_chat')
+      .select('*, profiles!auction_chat_user_id_fkey(username, display_name, avatar_url)')
+      .eq('auction_id', auctionId)
+      .order('created_at', { ascending: true })
+      .limit(50);
+
+    liveChatMessages = (data || []).map(m => ({
+      user: m.profiles?.display_name || m.profiles?.username || 'User',
+      ava: avatarColor(m.user_id),
+      text: m.content
+    }));
+
+    updateLiveChatUI();
+  } catch(e) { console.error('loadLiveChat:', e); }
+}
+
+function updateLiveChatUI() {
+  const area = $('#liveChatArea');
+  if (!area) return;
+  if (liveChatMessages.length === 0) {
+    area.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px;">No messages yet. Be the first to say something!</div>';
+    return;
+  }
+  area.innerHTML = liveChatMessages.map(m => `
+    <div class="live-chat-msg">
+      <div class="live-chat-ava" style="background:${m.ava}">${m.user[0].toUpperCase()}</div>
+      <div class="live-chat-body">
+        <div class="live-chat-name">${m.user}</div>
+        <div class="live-chat-text">${m.text}</div>
+      </div>
+    </div>
+  `).join('');
+  area.scrollTop = area.scrollHeight;
+}
+
+async function sendLiveChat(auctionId, text) {
+  if (!state.user || !text.trim()) return;
+  try {
+    const { error } = await sb.from('auction_chat').insert({
+      auction_id: auctionId,
+      user_id: state.user.id,
+      content: text.trim()
+    });
+    if (error) throw error;
+  } catch(e) { showToast('Failed to send message', 'error'); }
+}
+
+// ========== BIND APP EVENTS ==========
+function bindAppEvents() {
+  // Category pills
+  $$('.cat-pill, .nav-cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cat = btn.dataset.cat;
+      if (cat) {
+        state.selectedCategory = cat;
+        state.currentPage = 'discover';
+        render();
+      }
+    });
+  });
+
+  // Search
+  const searchInput = $('#searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      state.searchQuery = e.target.value;
+      if (state.currentPage === 'discover') {
+        const discoverPage = $('#page-discover');
+        if (discoverPage) discoverPage.innerHTML = renderDiscover();
+        $$('.cat-pill').forEach(btn => {
+          btn.addEventListener('click', () => {
+            state.selectedCategory = btn.dataset.cat;
+            render();
+          });
+        });
+      }
+    });
+  }
+
+  // Follow buttons
+  $$('.creator-follow-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.creator;
+      toggleFollow(id);
+    });
+  });
+
+  // Bid tabs
+  $$('[data-bid-tab]').forEach(tab => {
+    tab.addEventListener('click', () => {
+      state.bidTab = tab.dataset.bidTab;
+      render();
+    });
+  });
+
+  // Chat selection
+  $$('[data-chat]').forEach(item => {
+    item.addEventListener('click', () => {
+      state.selectedChat = parseInt(item.dataset.chat);
+      render();
+    });
+  });
+
+  // Chat send (DM)
+  const chatSend = $('#chatSendBtn');
+  const chatInput = $('#chatMsgInput');
+  if (chatSend && chatInput) {
+    const sendMsg = async () => {
+      const text = chatInput.value.trim();
+      if (!text || !state.user) return;
+      const conv = conversations[state.selectedChat];
+      if (!conv) return;
+
+      try {
+        const { error } = await sb.from('messages').insert({
+          conversation_id: conv.rawId,
+          sender_id: state.user.id,
+          content: text
+        });
+        if (error) throw error;
+
+        // Update conversation last_message_at
+        await sb.from('conversations').update({ last_message_at: new Date().toISOString() }).eq('id', conv.rawId);
+
+        // Optimistic update
+        conv.messages.push({ from: 'me', text });
+        conv.lastMsg = text;
+        conv.time = 'now';
+        chatInput.value = '';
+        render();
+        const chatArea = $('.chat-messages');
+        if (chatArea) chatArea.scrollTop = chatArea.scrollHeight;
+      } catch(e) { showToast('Failed to send message', 'error'); }
+    };
+    chatSend.addEventListener('click', sendMsg);
+    chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMsg(); });
+  }
+
+  // Live chat send
+  const liveSend = $('#liveChatSend');
+  const liveInput = $('#liveChatInput');
+  if (liveSend && liveInput && state.showLive) {
+    const sendLive = () => {
+      const text = liveInput.value.trim();
+      if (text) {
+        sendLiveChat(state.showLive, text);
+        liveInput.value = '';
+      }
+    };
+    liveSend.addEventListener('click', sendLive);
+    liveInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendLive(); });
+  }
+
+  // Detail overlay close
+  const overlay = $('#detailOverlay');
+  if (overlay) {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeDetail();
+    });
+  }
+
+  // Keyboard shortcuts
+  document.onkeydown = (e) => {
+    if (e.key === 'Escape' && state.showLive !== null) closeLive();
+    else if (e.key === 'Escape' && state.showAuctionDetail !== null) closeDetail();
+    else if (e.key === 'Escape' && state.showCreateAuction) closeCreateAuction();
+  };
+
+  // Store create auction form values when navigating steps
+  const titleInput = $('#createTitle');
+  const descInput = $('#createDesc');
+  const catInput = $('#createCategory');
+  const priceInput = $('#createPrice');
+  const durationInput = $('#createDuration');
+  if (titleInput) titleInput.addEventListener('input', (e) => { window._createTitle = e.target.value; });
+  if (descInput) descInput.addEventListener('input', (e) => { window._createDesc = e.target.value; });
+  if (catInput) catInput.addEventListener('change', (e) => { window._createCategory = e.target.value; });
+  if (priceInput) priceInput.addEventListener('input', (e) => { window._createPrice = parseFloat(e.target.value) || 0; });
+  if (durationInput) durationInput.addEventListener('change', (e) => { window._createDuration = parseInt(e.target.value) || 12; });
+}
+
+// ========== REALTIME SUBSCRIPTIONS ==========
+let realtimeChannel = null;
+
+function setupRealtime() {
+  if (realtimeChannel) realtimeChannel.unsubscribe();
+
+  realtimeChannel = sb.channel('aucty-realtime')
+    // New bids
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'bids' }, async (payload) => {
+      const bid = payload.new;
+      // If we were outbid, show notification
+      if (state.user && bid.bidder_id !== state.user.id) {
+        const a = auctions.find(x => x.id === bid.auction_id);
+        if (a && state.watchlist.has(bid.auction_id)) {
+          showToast('New bid on ' + a.title + ': ' + formatPrice(Math.round(bid.amount_cents / 100)), 'info');
+        }
+      }
+      // Reload auction data
+      await loadAuctions();
+      if (state.user) await loadMyBids();
+      render();
+      if (state.showAuctionDetail) openDetail(state.showAuctionDetail);
+      if (state.showLive) openLive(state.showLive);
+    })
+    // Auction updates
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'auctions' }, async () => {
+      await loadAuctions();
+      render();
+    })
+    // New messages
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async (payload) => {
+      const msg = payload.new;
+      if (state.user && msg.sender_id !== state.user.id) {
+        showToast('New message received!', 'info');
+        await loadConversations();
+        render();
+      }
+    })
+    // Live chat
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'auction_chat' }, async (payload) => {
+      const msg = payload.new;
+      if (state.showLive === msg.auction_id) {
+        // Fetch sender profile
+        const { data: profile } = await sb.from('profiles').select('display_name, username').eq('id', msg.user_id).single();
+        liveChatMessages.push({
+          user: profile?.display_name || profile?.username || 'User',
+          ava: avatarColor(msg.user_id),
+          text: msg.content
+        });
+        updateLiveChatUI();
+      }
+    })
+    // Notifications
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, async (payload) => {
+      if (state.user && payload.new.user_id === state.user.id) {
+        unreadNotifCount++;
+        showToast(payload.new.title || 'New notification', 'info');
+        render();
+      }
+    })
+    .subscribe();
+}
+
+// ========== COUNTDOWN TIMER ==========
+setInterval(() => {
+  // Refresh timeLeft for all auctions
+  auctions.forEach(a => {
+    if (a.endsAt) {
+      a.timeLeft = computeTimeLeft(a.endsAt);
+      a.badge = computeBadge(a.raw || {});
+    }
+  });
+  // Only re-render if on discover page to avoid interrupting other interactions
+  if (state.currentPage === 'discover' && !state.showAuctionDetail && !state.showLive && !state.showCreateAuction) {
+    const discoverPage = $('#page-discover');
+    if (discoverPage) discoverPage.innerHTML = renderDiscover();
+    // Rebind category pills
+    $$('.cat-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.selectedCategory = btn.dataset.cat;
+        render();
+      });
+    });
+  }
+}, 60000); // Every 60 seconds
+
+// ========== INIT ==========
+(async function init() {
+  // Check URL params for auth mode
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('mode') === 'signup') state.authMode = 'signup';
+  if (params.get('mode') === 'signin') state.authMode = 'signin';
+
+  // Apply dark mode from localStorage
+  if (state.darkMode) document.body.classList.add('dark-mode');
+
+  // Check for existing session
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    state.isAuthenticated = true;
+    state.user = {
+      id: session.user.id,
+      name: session.user.user_metadata?.display_name || session.user.email?.split('@')[0] || 'Collector',
+      username: session.user.user_metadata?.username || session.user.email?.split('@')[0] || 'collector',
+      email: session.user.email,
+      initials: getInitials(session.user.user_metadata?.display_name || session.user.email?.split('@')[0] || 'C')
+    };
+
+    render(); // Show app shell immediately
+
+    // Load data in background
+    await loadProfile();
+    await loadAllData();
+    setupRealtime();
+    render(); // Re-render with real data
+  } else {
+    render(); // Show auth screen
+  }
+
+  // Listen for auth state changes (handles OAuth redirects, etc.)
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      state.isAuthenticated = true;
+      state.user = {
+        id: session.user.id,
+        name: session.user.user_metadata?.display_name || session.user.email?.split('@')[0] || 'Collector',
+        username: session.user.user_metadata?.username || session.user.email?.split('@')[0] || 'collector',
+        email: session.user.email,
+        initials: getInitials(session.user.user_metadata?.display_name || session.user.email?.split('@')[0] || 'C')
+      };
+      state.loading = false;
+      render();
+
+      await loadProfile();
+      await loadAllData();
+      setupRealtime();
+      render();
+    } else if (event === 'SIGNED_OUT') {
+      state.isAuthenticated = false;
+      state.user = null;
+      state.loading = false;
+      if (realtimeChannel) realtimeChannel.unsubscribe();
+      render();
+    }
+  });
+})();
+
+</script>
+</body>
+</html>
+ + tax.toFixed(2) + '</span></div>'
+    + '<div style="display:flex;justify-content:space-between;font-size:16px;font-weight:800;margin-top:8px;color:var(--brand);"><span>Total</span><span>
+const GOLIVE_NAMES = ['ArtLover99','BidQueen','NightOwl','PixelHunter','VintageVibes','CryptoKid','SneakerHead','DesignJunkie','MusicNerd','TechBro'];
+
+function openGoLive() {
+  if (!state.user) { openAuth(); return; }
+  state.showGoLive = true;
+  render();
+}
+
+function closeGoLive() {
+  state.showGoLive = false;
+  render();
+}
+
+function startBroadcast(auctionId) {
+  const auction = state.auctions.find(a => a.id === auctionId) || state.auctions[0];
+  if (!auction) return;
+  state.showGoLive = false;
+  state.goLiveAuction = auction;
+  state.goLiveViewers = Math.floor(Math.random() * 30) + 5;
+  state.goLiveChat = [{ user: 'System', text: 'You are now live! Viewers are joining...', type: 'system' }];
+  state.goLiveMuted = false;
+  render();
+
+  // Simulate chat activity
+  window.__goLiveInterval = setInterval(() => {
+    const rand = Math.random();
+    const name = GOLIVE_NAMES[Math.floor(Math.random() * GOLIVE_NAMES.length)];
+    if (rand < 0.4) {
+      const msgs = ['Love this!','How much is shipping?','Is this still available?','Amazing piece!','Can you show the back?','What material is this?','Fire ð¥','Need this!','Take my money ð¸','Beautiful work'];
+      state.goLiveChat.push({ user: name, text: msgs[Math.floor(Math.random() * msgs.length)] });
+    } else if (rand < 0.6) {
+      state.goLiveChat.push({ user: name, text: 'just joined', type: 'join' });
+      state.goLiveViewers += 1;
+    } else if (rand < 0.75) {
+      const amt = (parseFloat(auction.currentBid || auction.startingBid) + Math.floor(Math.random() * 50) + 10).toFixed(2);
+      state.goLiveChat.push({ user: name, text: 'placed a bid of $' + amt, type: 'bid' });
+    }
+    if (state.goLiveChat.length > 50) state.goLiveChat = state.goLiveChat.slice(-50);
+    render();
+  }, 2500);
+}
+
+function endBroadcast() {
+  clearInterval(window.__goLiveInterval);
+  state.goLiveAuction = null;
+  state.goLiveChat = [];
+  state.goLiveViewers = 0;
+  render();
+}
+
+function openCreateAuction() { state.showCreateAuction = true; state.createStep = 1; render(); }
+function closeCreateAuction() { state.showCreateAuction = false; render(); }
+
+// Image handling for create auction
+let selectedImages = [];
+function handleImageSelect(input) {
+  selectedImages = Array.from(input.files).slice(0, 10);
+  const preview = $('#imagePreview');
+  if (preview) {
+    preview.innerHTML = selectedImages.map((f, i) => `
+      <div style="width:60px;height:60px;border-radius:8px;overflow:hidden;border:1px solid var(--border);">
+        <img src="${URL.createObjectURL(f)}" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+    `).join('');
+  }
+}
+
+async function publishAuction() {
+  if (!state.user) return;
+
+  // Get form values (they may have been collected across steps - use stored values)
+  const title = window._createTitle || '';
+  const desc = window._createDesc || '';
+  const category = window._createCategory || '';
+  const price = window._createPrice || 0;
+  const duration = window._createDuration || 12;
+
+  if (!title || !category || !price) {
+    showToast('Please fill in all required fields', 'error');
+    return;
+  }
+
+  try {
+    // Upload images
+    let imageUrls = [];
+    for (const file of selectedImages) {
+      const ext = file.name.split('.').pop();
+      const path = state.user.id + '/' + Date.now() + '_' + Math.random().toString(36).substring(2) + '.' + ext;
+      const { error: uploadErr } = await sb.storage.from('auction-images').upload(path, file);
+      if (!uploadErr) {
+        const { data: urlData } = sb.storage.from('auction-images').getPublicUrl(path);
+        if (urlData) imageUrls.push(urlData.publicUrl);
+      }
+    }
+
+    const endsAt = new Date(Date.now() + duration * 3600000).toISOString();
+
+    const { error } = await sb.from('auctions').insert({
+      creator_id: state.user.id,
+      title: title,
+      description: desc,
+      category: category,
+      starting_price_cents: Math.round(price * 100),
+      ends_at: endsAt,
+      images: imageUrls,
+      status: 'active'
+    });
+    if (error) throw error;
+
+    state.showCreateAuction = false;
+    selectedImages = [];
+    window._createTitle = '';
+    window._createDesc = '';
+    window._createCategory = '';
+    window._createPrice = 0;
+    window._createDuration = 12;
+
+    showToast('Listing published! It is now live.', 'success');
+    await loadAuctions();
+    render();
+  } catch(e) { showToast('Publish failed: ' + e.message, 'error'); }
+}
+
+async function startConversation(creatorId) {
+  if (!state.user) return;
+  try {
+    // Check if conversation already exists
+    const { data: existing } = await sb.from('conversations')
+      .select('id')
+      .or('and(participant_1.eq.' + state.user.id + ',participant_2.eq.' + creatorId + '),and(participant_1.eq.' + creatorId + ',participant_2.eq.' + state.user.id + ')')
+      .single();
+
+    if (existing) {
+      // Switch to messages
+      const idx = conversations.findIndex(c => c.rawId === existing.id);
+      if (idx >= 0) state.selectedChat = idx;
+      navigateTo('messages');
+    } else {
+      // Create new conversation
+      const { data, error } = await sb.from('conversations').insert({
+        participant_1: state.user.id,
+        participant_2: creatorId
+      }).select().single();
+      if (error) throw error;
+      await loadConversations();
+      state.selectedChat = 0;
+      navigateTo('messages');
+    }
+  } catch(e) { showToast('Could not start conversation: ' + e.message, 'error'); }
+}
+
+async function logout() {
+  await sb.auth.signOut();
+  state.isAuthenticated = false;
+  state.user = null;
+  state.currentPage = 'discover';
+  document.body.classList.remove('dark-mode');
+  state.darkMode = false;
+  localStorage.removeItem('aucty-dark');
+  creators = [];
+  auctions = [];
+  conversations = [];
+  myBids = [];
+  render();
+}
+
+// ========== LIVE CHAT ==========
+let liveChatMessages = [];
+
+async function loadLiveChat(auctionId) {
+  try {
+    const { data } = await sb.from('auction_chat')
+      .select('*, profiles!auction_chat_user_id_fkey(username, display_name, avatar_url)')
+      .eq('auction_id', auctionId)
+      .order('created_at', { ascending: true })
+      .limit(50);
+
+    liveChatMessages = (data || []).map(m => ({
+      user: m.profiles?.display_name || m.profiles?.username || 'User',
+      ava: avatarColor(m.user_id),
+      text: m.content
+    }));
+
+    updateLiveChatUI();
+  } catch(e) { console.error('loadLiveChat:', e); }
+}
+
+function updateLiveChatUI() {
+  const area = $('#liveChatArea');
+  if (!area) return;
+  if (liveChatMessages.length === 0) {
+    area.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px;">No messages yet. Be the first to say something!</div>';
+    return;
+  }
+  area.innerHTML = liveChatMessages.map(m => `
+    <div class="live-chat-msg">
+      <div class="live-chat-ava" style="background:${m.ava}">${m.user[0].toUpperCase()}</div>
+      <div class="live-chat-body">
+        <div class="live-chat-name">${m.user}</div>
+        <div class="live-chat-text">${m.text}</div>
+      </div>
+    </div>
+  `).join('');
+  area.scrollTop = area.scrollHeight;
+}
+
+async function sendLiveChat(auctionId, text) {
+  if (!state.user || !text.trim()) return;
+  try {
+    const { error } = await sb.from('auction_chat').insert({
+      auction_id: auctionId,
+      user_id: state.user.id,
+      content: text.trim()
+    });
+    if (error) throw error;
+  } catch(e) { showToast('Failed to send message', 'error'); }
+}
+
+// ========== BIND APP EVENTS ==========
+function bindAppEvents() {
+  // Category pills
+  $$('.cat-pill, .nav-cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cat = btn.dataset.cat;
+      if (cat) {
+        state.selectedCategory = cat;
+        state.currentPage = 'discover';
+        render();
+      }
+    });
+  });
+
+  // Search
+  const searchInput = $('#searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      state.searchQuery = e.target.value;
+      if (state.currentPage === 'discover') {
+        const discoverPage = $('#page-discover');
+        if (discoverPage) discoverPage.innerHTML = renderDiscover();
+        $$('.cat-pill').forEach(btn => {
+          btn.addEventListener('click', () => {
+            state.selectedCategory = btn.dataset.cat;
+            render();
+          });
+        });
+      }
+    });
+  }
+
+  // Follow buttons
+  $$('.creator-follow-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.creator;
+      toggleFollow(id);
+    });
+  });
+
+  // Bid tabs
+  $$('[data-bid-tab]').forEach(tab => {
+    tab.addEventListener('click', () => {
+      state.bidTab = tab.dataset.bidTab;
+      render();
+    });
+  });
+
+  // Chat selection
+  $$('[data-chat]').forEach(item => {
+    item.addEventListener('click', () => {
+      state.selectedChat = parseInt(item.dataset.chat);
+      render();
+    });
+  });
+
+  // Chat send (DM)
+  const chatSend = $('#chatSendBtn');
+  const chatInput = $('#chatMsgInput');
+  if (chatSend && chatInput) {
+    const sendMsg = async () => {
+      const text = chatInput.value.trim();
+      if (!text || !state.user) return;
+      const conv = conversations[state.selectedChat];
+      if (!conv) return;
+
+      try {
+        const { error } = await sb.from('messages').insert({
+          conversation_id: conv.rawId,
+          sender_id: state.user.id,
+          content: text
+        });
+        if (error) throw error;
+
+        // Update conversation last_message_at
+        await sb.from('conversations').update({ last_message_at: new Date().toISOString() }).eq('id', conv.rawId);
+
+        // Optimistic update
+        conv.messages.push({ from: 'me', text });
+        conv.lastMsg = text;
+        conv.time = 'now';
+        chatInput.value = '';
+        render();
+        const chatArea = $('.chat-messages');
+        if (chatArea) chatArea.scrollTop = chatArea.scrollHeight;
+      } catch(e) { showToast('Failed to send message', 'error'); }
+    };
+    chatSend.addEventListener('click', sendMsg);
+    chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMsg(); });
+  }
+
+  // Live chat send
+  const liveSend = $('#liveChatSend');
+  const liveInput = $('#liveChatInput');
+  if (liveSend && liveInput && state.showLive) {
+    const sendLive = () => {
+      const text = liveInput.value.trim();
+      if (text) {
+        sendLiveChat(state.showLive, text);
+        liveInput.value = '';
+      }
+    };
+    liveSend.addEventListener('click', sendLive);
+    liveInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendLive(); });
+  }
+
+  // Detail overlay close
+  const overlay = $('#detailOverlay');
+  if (overlay) {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeDetail();
+    });
+  }
+
+  // Keyboard shortcuts
+  document.onkeydown = (e) => {
+    if (e.key === 'Escape' && state.showLive !== null) closeLive();
+    else if (e.key === 'Escape' && state.showAuctionDetail !== null) closeDetail();
+    else if (e.key === 'Escape' && state.showCreateAuction) closeCreateAuction();
+  };
+
+  // Store create auction form values when navigating steps
+  const titleInput = $('#createTitle');
+  const descInput = $('#createDesc');
+  const catInput = $('#createCategory');
+  const priceInput = $('#createPrice');
+  const durationInput = $('#createDuration');
+  if (titleInput) titleInput.addEventListener('input', (e) => { window._createTitle = e.target.value; });
+  if (descInput) descInput.addEventListener('input', (e) => { window._createDesc = e.target.value; });
+  if (catInput) catInput.addEventListener('change', (e) => { window._createCategory = e.target.value; });
+  if (priceInput) priceInput.addEventListener('input', (e) => { window._createPrice = parseFloat(e.target.value) || 0; });
+  if (durationInput) durationInput.addEventListener('change', (e) => { window._createDuration = parseInt(e.target.value) || 12; });
+}
+
+// ========== REALTIME SUBSCRIPTIONS ==========
+let realtimeChannel = null;
+
+function setupRealtime() {
+  if (realtimeChannel) realtimeChannel.unsubscribe();
+
+  realtimeChannel = sb.channel('aucty-realtime')
+    // New bids
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'bids' }, async (payload) => {
+      const bid = payload.new;
+      // If we were outbid, show notification
+      if (state.user && bid.bidder_id !== state.user.id) {
+        const a = auctions.find(x => x.id === bid.auction_id);
+        if (a && state.watchlist.has(bid.auction_id)) {
+          showToast('New bid on ' + a.title + ': ' + formatPrice(Math.round(bid.amount_cents / 100)), 'info');
+        }
+      }
+      // Reload auction data
+      await loadAuctions();
+      if (state.user) await loadMyBids();
+      render();
+      if (state.showAuctionDetail) openDetail(state.showAuctionDetail);
+      if (state.showLive) openLive(state.showLive);
+    })
+    // Auction updates
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'auctions' }, async () => {
+      await loadAuctions();
+      render();
+    })
+    // New messages
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async (payload) => {
+      const msg = payload.new;
+      if (state.user && msg.sender_id !== state.user.id) {
+        showToast('New message received!', 'info');
+        await loadConversations();
+        render();
+      }
+    })
+    // Live chat
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'auction_chat' }, async (payload) => {
+      const msg = payload.new;
+      if (state.showLive === msg.auction_id) {
+        // Fetch sender profile
+        const { data: profile } = await sb.from('profiles').select('display_name, username').eq('id', msg.user_id).single();
+        liveChatMessages.push({
+          user: profile?.display_name || profile?.username || 'User',
+          ava: avatarColor(msg.user_id),
+          text: msg.content
+        });
+        updateLiveChatUI();
+      }
+    })
+    // Notifications
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, async (payload) => {
+      if (state.user && payload.new.user_id === state.user.id) {
+        unreadNotifCount++;
+        showToast(payload.new.title || 'New notification', 'info');
+        render();
+      }
+    })
+    .subscribe();
+}
+
+// ========== COUNTDOWN TIMER ==========
+setInterval(() => {
+  // Refresh timeLeft for all auctions
+  auctions.forEach(a => {
+    if (a.endsAt) {
+      a.timeLeft = computeTimeLeft(a.endsAt);
+      a.badge = computeBadge(a.raw || {});
+    }
+  });
+  // Only re-render if on discover page to avoid interrupting other interactions
+  if (state.currentPage === 'discover' && !state.showAuctionDetail && !state.showLive && !state.showCreateAuction) {
+    const discoverPage = $('#page-discover');
+    if (discoverPage) discoverPage.innerHTML = renderDiscover();
+    // Rebind category pills
+    $$('.cat-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.selectedCategory = btn.dataset.cat;
+        render();
+      });
+    });
+  }
+}, 60000); // Every 60 seconds
+
+// ========== INIT ==========
+(async function init() {
+  // Check URL params for auth mode
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('mode') === 'signup') state.authMode = 'signup';
+  if (params.get('mode') === 'signin') state.authMode = 'signin';
+
+  // Apply dark mode from localStorage
+  if (state.darkMode) document.body.classList.add('dark-mode');
+
+  // Check for existing session
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    state.isAuthenticated = true;
+    state.user = {
+      id: session.user.id,
+      name: session.user.user_metadata?.display_name || session.user.email?.split('@')[0] || 'Collector',
+      username: session.user.user_metadata?.username || session.user.email?.split('@')[0] || 'collector',
+      email: session.user.email,
+      initials: getInitials(session.user.user_metadata?.display_name || session.user.email?.split('@')[0] || 'C')
+    };
+
+    render(); // Show app shell immediately
+
+    // Load data in background
+    await loadProfile();
+    await loadAllData();
+    setupRealtime();
+    render(); // Re-render with real data
+  } else {
+    render(); // Show auth screen
+  }
+
+  // Listen for auth state changes (handles OAuth redirects, etc.)
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      state.isAuthenticated = true;
+      state.user = {
+        id: session.user.id,
+        name: session.user.user_metadata?.display_name || session.user.email?.split('@')[0] || 'Collector',
+        username: session.user.user_metadata?.username || session.user.email?.split('@')[0] || 'collector',
+        email: session.user.email,
+        initials: getInitials(session.user.user_metadata?.display_name || session.user.email?.split('@')[0] || 'C')
+      };
+      state.loading = false;
+      render();
+
+      await loadProfile();
+      await loadAllData();
+      setupRealtime();
+      render();
+    } else if (event === 'SIGNED_OUT') {
+      state.isAuthenticated = false;
+      state.user = null;
+      state.loading = false;
+      if (realtimeChannel) realtimeChannel.unsubscribe();
+      render();
+    }
+  });
+})();
+
+</script>
+</body>
+</html>
+ + total.toFixed(2) + '</span></div></div>'
+    + '<div style="margin-bottom:16px;"><div style="font-size:12px;font-weight:700;margin-bottom:8px;text-transform:uppercase;">Card Details</div>'
+    + '<div id="checkout-card-element" style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px;background:var(--bg-card);min-height:44px;"></div>'
+    + '<div id="checkout-card-errors" style="color:#ef4444;font-size:12px;margin-top:6px;min-height:18px;"></div></div>'
+    + '<button id="checkout-pay-btn" onclick="processCheckoutPayment(\x27' + auctionId + '\x27,' + Math.round(total * 100) + ')" style="width:100%;padding:14px;border-radius:999px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;font-size:15px;font-weight:800;border:none;cursor:pointer;">Pay 
+const GOLIVE_NAMES = ['ArtLover99','BidQueen','NightOwl','PixelHunter','VintageVibes','CryptoKid','SneakerHead','DesignJunkie','MusicNerd','TechBro'];
+
+function openGoLive() {
+  if (!state.user) { openAuth(); return; }
+  state.showGoLive = true;
+  render();
+}
+
+function closeGoLive() {
+  state.showGoLive = false;
+  render();
+}
+
+function startBroadcast(auctionId) {
+  const auction = state.auctions.find(a => a.id === auctionId) || state.auctions[0];
+  if (!auction) return;
+  state.showGoLive = false;
+  state.goLiveAuction = auction;
+  state.goLiveViewers = Math.floor(Math.random() * 30) + 5;
+  state.goLiveChat = [{ user: 'System', text: 'You are now live! Viewers are joining...', type: 'system' }];
+  state.goLiveMuted = false;
+  render();
+
+  // Simulate chat activity
+  window.__goLiveInterval = setInterval(() => {
+    const rand = Math.random();
+    const name = GOLIVE_NAMES[Math.floor(Math.random() * GOLIVE_NAMES.length)];
+    if (rand < 0.4) {
+      const msgs = ['Love this!','How much is shipping?','Is this still available?','Amazing piece!','Can you show the back?','What material is this?','Fire ð¥','Need this!','Take my money ð¸','Beautiful work'];
+      state.goLiveChat.push({ user: name, text: msgs[Math.floor(Math.random() * msgs.length)] });
+    } else if (rand < 0.6) {
+      state.goLiveChat.push({ user: name, text: 'just joined', type: 'join' });
+      state.goLiveViewers += 1;
+    } else if (rand < 0.75) {
+      const amt = (parseFloat(auction.currentBid || auction.startingBid) + Math.floor(Math.random() * 50) + 10).toFixed(2);
+      state.goLiveChat.push({ user: name, text: 'placed a bid of $' + amt, type: 'bid' });
+    }
+    if (state.goLiveChat.length > 50) state.goLiveChat = state.goLiveChat.slice(-50);
+    render();
+  }, 2500);
+}
+
+function endBroadcast() {
+  clearInterval(window.__goLiveInterval);
+  state.goLiveAuction = null;
+  state.goLiveChat = [];
+  state.goLiveViewers = 0;
+  render();
+}
+
+function openCreateAuction() { state.showCreateAuction = true; state.createStep = 1; render(); }
+function closeCreateAuction() { state.showCreateAuction = false; render(); }
+
+// Image handling for create auction
+let selectedImages = [];
+function handleImageSelect(input) {
+  selectedImages = Array.from(input.files).slice(0, 10);
+  const preview = $('#imagePreview');
+  if (preview) {
+    preview.innerHTML = selectedImages.map((f, i) => `
+      <div style="width:60px;height:60px;border-radius:8px;overflow:hidden;border:1px solid var(--border);">
+        <img src="${URL.createObjectURL(f)}" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+    `).join('');
+  }
+}
+
+async function publishAuction() {
+  if (!state.user) return;
+
+  // Get form values (they may have been collected across steps - use stored values)
+  const title = window._createTitle || '';
+  const desc = window._createDesc || '';
+  const category = window._createCategory || '';
+  const price = window._createPrice || 0;
+  const duration = window._createDuration || 12;
+
+  if (!title || !category || !price) {
+    showToast('Please fill in all required fields', 'error');
+    return;
+  }
+
+  try {
+    // Upload images
+    let imageUrls = [];
+    for (const file of selectedImages) {
+      const ext = file.name.split('.').pop();
+      const path = state.user.id + '/' + Date.now() + '_' + Math.random().toString(36).substring(2) + '.' + ext;
+      const { error: uploadErr } = await sb.storage.from('auction-images').upload(path, file);
+      if (!uploadErr) {
+        const { data: urlData } = sb.storage.from('auction-images').getPublicUrl(path);
+        if (urlData) imageUrls.push(urlData.publicUrl);
+      }
+    }
+
+    const endsAt = new Date(Date.now() + duration * 3600000).toISOString();
+
+    const { error } = await sb.from('auctions').insert({
+      creator_id: state.user.id,
+      title: title,
+      description: desc,
+      category: category,
+      starting_price_cents: Math.round(price * 100),
+      ends_at: endsAt,
+      images: imageUrls,
+      status: 'active'
+    });
+    if (error) throw error;
+
+    state.showCreateAuction = false;
+    selectedImages = [];
+    window._createTitle = '';
+    window._createDesc = '';
+    window._createCategory = '';
+    window._createPrice = 0;
+    window._createDuration = 12;
+
+    showToast('Listing published! It is now live.', 'success');
+    await loadAuctions();
+    render();
+  } catch(e) { showToast('Publish failed: ' + e.message, 'error'); }
+}
+
+async function startConversation(creatorId) {
+  if (!state.user) return;
+  try {
+    // Check if conversation already exists
+    const { data: existing } = await sb.from('conversations')
+      .select('id')
+      .or('and(participant_1.eq.' + state.user.id + ',participant_2.eq.' + creatorId + '),and(participant_1.eq.' + creatorId + ',participant_2.eq.' + state.user.id + ')')
+      .single();
+
+    if (existing) {
+      // Switch to messages
+      const idx = conversations.findIndex(c => c.rawId === existing.id);
+      if (idx >= 0) state.selectedChat = idx;
+      navigateTo('messages');
+    } else {
+      // Create new conversation
+      const { data, error } = await sb.from('conversations').insert({
+        participant_1: state.user.id,
+        participant_2: creatorId
+      }).select().single();
+      if (error) throw error;
+      await loadConversations();
+      state.selectedChat = 0;
+      navigateTo('messages');
+    }
+  } catch(e) { showToast('Could not start conversation: ' + e.message, 'error'); }
+}
+
+async function logout() {
+  await sb.auth.signOut();
+  state.isAuthenticated = false;
+  state.user = null;
+  state.currentPage = 'discover';
+  document.body.classList.remove('dark-mode');
+  state.darkMode = false;
+  localStorage.removeItem('aucty-dark');
+  creators = [];
+  auctions = [];
+  conversations = [];
+  myBids = [];
+  render();
+}
+
+// ========== LIVE CHAT ==========
+let liveChatMessages = [];
+
+async function loadLiveChat(auctionId) {
+  try {
+    const { data } = await sb.from('auction_chat')
+      .select('*, profiles!auction_chat_user_id_fkey(username, display_name, avatar_url)')
+      .eq('auction_id', auctionId)
+      .order('created_at', { ascending: true })
+      .limit(50);
+
+    liveChatMessages = (data || []).map(m => ({
+      user: m.profiles?.display_name || m.profiles?.username || 'User',
+      ava: avatarColor(m.user_id),
+      text: m.content
+    }));
+
+    updateLiveChatUI();
+  } catch(e) { console.error('loadLiveChat:', e); }
+}
+
+function updateLiveChatUI() {
+  const area = $('#liveChatArea');
+  if (!area) return;
+  if (liveChatMessages.length === 0) {
+    area.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px;">No messages yet. Be the first to say something!</div>';
+    return;
+  }
+  area.innerHTML = liveChatMessages.map(m => `
+    <div class="live-chat-msg">
+      <div class="live-chat-ava" style="background:${m.ava}">${m.user[0].toUpperCase()}</div>
+      <div class="live-chat-body">
+        <div class="live-chat-name">${m.user}</div>
+        <div class="live-chat-text">${m.text}</div>
+      </div>
+    </div>
+  `).join('');
+  area.scrollTop = area.scrollHeight;
+}
+
+async function sendLiveChat(auctionId, text) {
+  if (!state.user || !text.trim()) return;
+  try {
+    const { error } = await sb.from('auction_chat').insert({
+      auction_id: auctionId,
+      user_id: state.user.id,
+      content: text.trim()
+    });
+    if (error) throw error;
+  } catch(e) { showToast('Failed to send message', 'error'); }
+}
+
+// ========== BIND APP EVENTS ==========
+function bindAppEvents() {
+  // Category pills
+  $$('.cat-pill, .nav-cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cat = btn.dataset.cat;
+      if (cat) {
+        state.selectedCategory = cat;
+        state.currentPage = 'discover';
+        render();
+      }
+    });
+  });
+
+  // Search
+  const searchInput = $('#searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      state.searchQuery = e.target.value;
+      if (state.currentPage === 'discover') {
+        const discoverPage = $('#page-discover');
+        if (discoverPage) discoverPage.innerHTML = renderDiscover();
+        $$('.cat-pill').forEach(btn => {
+          btn.addEventListener('click', () => {
+            state.selectedCategory = btn.dataset.cat;
+            render();
+          });
+        });
+      }
+    });
+  }
+
+  // Follow buttons
+  $$('.creator-follow-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.creator;
+      toggleFollow(id);
+    });
+  });
+
+  // Bid tabs
+  $$('[data-bid-tab]').forEach(tab => {
+    tab.addEventListener('click', () => {
+      state.bidTab = tab.dataset.bidTab;
+      render();
+    });
+  });
+
+  // Chat selection
+  $$('[data-chat]').forEach(item => {
+    item.addEventListener('click', () => {
+      state.selectedChat = parseInt(item.dataset.chat);
+      render();
+    });
+  });
+
+  // Chat send (DM)
+  const chatSend = $('#chatSendBtn');
+  const chatInput = $('#chatMsgInput');
+  if (chatSend && chatInput) {
+    const sendMsg = async () => {
+      const text = chatInput.value.trim();
+      if (!text || !state.user) return;
+      const conv = conversations[state.selectedChat];
+      if (!conv) return;
+
+      try {
+        const { error } = await sb.from('messages').insert({
+          conversation_id: conv.rawId,
+          sender_id: state.user.id,
+          content: text
+        });
+        if (error) throw error;
+
+        // Update conversation last_message_at
+        await sb.from('conversations').update({ last_message_at: new Date().toISOString() }).eq('id', conv.rawId);
+
+        // Optimistic update
+        conv.messages.push({ from: 'me', text });
+        conv.lastMsg = text;
+        conv.time = 'now';
+        chatInput.value = '';
+        render();
+        const chatArea = $('.chat-messages');
+        if (chatArea) chatArea.scrollTop = chatArea.scrollHeight;
+      } catch(e) { showToast('Failed to send message', 'error'); }
+    };
+    chatSend.addEventListener('click', sendMsg);
+    chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMsg(); });
+  }
+
+  // Live chat send
+  const liveSend = $('#liveChatSend');
+  const liveInput = $('#liveChatInput');
+  if (liveSend && liveInput && state.showLive) {
+    const sendLive = () => {
+      const text = liveInput.value.trim();
+      if (text) {
+        sendLiveChat(state.showLive, text);
+        liveInput.value = '';
+      }
+    };
+    liveSend.addEventListener('click', sendLive);
+    liveInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendLive(); });
+  }
+
+  // Detail overlay close
+  const overlay = $('#detailOverlay');
+  if (overlay) {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeDetail();
+    });
+  }
+
+  // Keyboard shortcuts
+  document.onkeydown = (e) => {
+    if (e.key === 'Escape' && state.showLive !== null) closeLive();
+    else if (e.key === 'Escape' && state.showAuctionDetail !== null) closeDetail();
+    else if (e.key === 'Escape' && state.showCreateAuction) closeCreateAuction();
+  };
+
+  // Store create auction form values when navigating steps
+  const titleInput = $('#createTitle');
+  const descInput = $('#createDesc');
+  const catInput = $('#createCategory');
+  const priceInput = $('#createPrice');
+  const durationInput = $('#createDuration');
+  if (titleInput) titleInput.addEventListener('input', (e) => { window._createTitle = e.target.value; });
+  if (descInput) descInput.addEventListener('input', (e) => { window._createDesc = e.target.value; });
+  if (catInput) catInput.addEventListener('change', (e) => { window._createCategory = e.target.value; });
+  if (priceInput) priceInput.addEventListener('input', (e) => { window._createPrice = parseFloat(e.target.value) || 0; });
+  if (durationInput) durationInput.addEventListener('change', (e) => { window._createDuration = parseInt(e.target.value) || 12; });
+}
+
+// ========== REALTIME SUBSCRIPTIONS ==========
+let realtimeChannel = null;
+
+function setupRealtime() {
+  if (realtimeChannel) realtimeChannel.unsubscribe();
+
+  realtimeChannel = sb.channel('aucty-realtime')
+    // New bids
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'bids' }, async (payload) => {
+      const bid = payload.new;
+      // If we were outbid, show notification
+      if (state.user && bid.bidder_id !== state.user.id) {
+        const a = auctions.find(x => x.id === bid.auction_id);
+        if (a && state.watchlist.has(bid.auction_id)) {
+          showToast('New bid on ' + a.title + ': ' + formatPrice(Math.round(bid.amount_cents / 100)), 'info');
+        }
+      }
+      // Reload auction data
+      await loadAuctions();
+      if (state.user) await loadMyBids();
+      render();
+      if (state.showAuctionDetail) openDetail(state.showAuctionDetail);
+      if (state.showLive) openLive(state.showLive);
+    })
+    // Auction updates
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'auctions' }, async () => {
+      await loadAuctions();
+      render();
+    })
+    // New messages
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async (payload) => {
+      const msg = payload.new;
+      if (state.user && msg.sender_id !== state.user.id) {
+        showToast('New message received!', 'info');
+        await loadConversations();
+        render();
+      }
+    })
+    // Live chat
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'auction_chat' }, async (payload) => {
+      const msg = payload.new;
+      if (state.showLive === msg.auction_id) {
+        // Fetch sender profile
+        const { data: profile } = await sb.from('profiles').select('display_name, username').eq('id', msg.user_id).single();
+        liveChatMessages.push({
+          user: profile?.display_name || profile?.username || 'User',
+          ava: avatarColor(msg.user_id),
+          text: msg.content
+        });
+        updateLiveChatUI();
+      }
+    })
+    // Notifications
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, async (payload) => {
+      if (state.user && payload.new.user_id === state.user.id) {
+        unreadNotifCount++;
+        showToast(payload.new.title || 'New notification', 'info');
+        render();
+      }
+    })
+    .subscribe();
+}
+
+// ========== COUNTDOWN TIMER ==========
+setInterval(() => {
+  // Refresh timeLeft for all auctions
+  auctions.forEach(a => {
+    if (a.endsAt) {
+      a.timeLeft = computeTimeLeft(a.endsAt);
+      a.badge = computeBadge(a.raw || {});
+    }
+  });
+  // Only re-render if on discover page to avoid interrupting other interactions
+  if (state.currentPage === 'discover' && !state.showAuctionDetail && !state.showLive && !state.showCreateAuction) {
+    const discoverPage = $('#page-discover');
+    if (discoverPage) discoverPage.innerHTML = renderDiscover();
+    // Rebind category pills
+    $$('.cat-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.selectedCategory = btn.dataset.cat;
+        render();
+      });
+    });
+  }
+}, 60000); // Every 60 seconds
+
+// ========== INIT ==========
+(async function init() {
+  // Check URL params for auth mode
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('mode') === 'signup') state.authMode = 'signup';
+  if (params.get('mode') === 'signin') state.authMode = 'signin';
+
+  // Apply dark mode from localStorage
+  if (state.darkMode) document.body.classList.add('dark-mode');
+
+  // Check for existing session
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    state.isAuthenticated = true;
+    state.user = {
+      id: session.user.id,
+      name: session.user.user_metadata?.display_name || session.user.email?.split('@')[0] || 'Collector',
+      username: session.user.user_metadata?.username || session.user.email?.split('@')[0] || 'collector',
+      email: session.user.email,
+      initials: getInitials(session.user.user_metadata?.display_name || session.user.email?.split('@')[0] || 'C')
+    };
+
+    render(); // Show app shell immediately
+
+    // Load data in background
+    await loadProfile();
+    await loadAllData();
+    setupRealtime();
+    render(); // Re-render with real data
+  } else {
+    render(); // Show auth screen
+  }
+
+  // Listen for auth state changes (handles OAuth redirects, etc.)
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      state.isAuthenticated = true;
+      state.user = {
+        id: session.user.id,
+        name: session.user.user_metadata?.display_name || session.user.email?.split('@')[0] || 'Collector',
+        username: session.user.user_metadata?.username || session.user.email?.split('@')[0] || 'collector',
+        email: session.user.email,
+        initials: getInitials(session.user.user_metadata?.display_name || session.user.email?.split('@')[0] || 'C')
+      };
+      state.loading = false;
+      render();
+
+      await loadProfile();
+      await loadAllData();
+      setupRealtime();
+      render();
+    } else if (event === 'SIGNED_OUT') {
+      state.isAuthenticated = false;
+      state.user = null;
+      state.loading = false;
+      if (realtimeChannel) realtimeChannel.unsubscribe();
+      render();
+    }
+  });
+})();
+
+</script>
+</body>
+</html>
+ + total.toFixed(2) + '</button>'
+    + '<div style="display:flex;align-items:center;gap:6px;margin-top:12px;font-size:11px;color:var(--text-muted);justify-content:center;">\u{1F512} Secured by Stripe</div></div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeCheckout(); });
+  setTimeout(() => {
+    if (!stripe) return;
+    const el = stripe.elements();
+    const card = el.create('card', { style: { base: { fontSize: '15px', color: '#1a1a2e', fontFamily: 'Inter, sans-serif', '::placeholder': { color: '#9ca3af' } }, invalid: { color: '#ef4444' } } });
+    card.mount('#checkout-card-element');
+    card.on('change', (e) => { const errEl = document.getElementById('checkout-card-errors'); if (errEl) errEl.textContent = e.error ? e.error.message : ''; });
+    window._checkoutCard = card;
+  }, 100);
+}
+
+function closeCheckout() {
+  const overlay = document.getElementById('checkout-overlay');
+  if (overlay) overlay.remove();
+  window._checkoutCard = null;
+}
+
+async function processCheckoutPayment(auctionId, amountCents) {
+  const btn = document.getElementById('checkout-pay-btn');
+  const errEl = document.getElementById('checkout-card-errors');
+  if (!stripe || !window._checkoutCard) { if (errEl) errEl.textContent = 'Stripe not ready'; return; }
+  btn.disabled = true; btn.textContent = 'Processing...';
+  if (errEl) errEl.textContent = '';
+  try {
+    const { data: sessionData } = await sb.auth.getSession();
+    const token = sessionData?.session?.access_token;
+    if (!token) throw new Error('You must be signed in to pay');
+    const resp = await fetch(SUPABASE_URL + '/functions/v1/create-payment-intent', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ auction_id: auctionId, amount: amountCents })
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Payment setup failed');
+    const { error, paymentIntent } = await stripe.confirmCardPayment(data.clientSecret, { payment_method: { card: window._checkoutCard } });
+    if (error) throw new Error(error.message);
+    if (paymentIntent.status === 'succeeded') {
+      closeCheckout();
+      showToast('Payment successful! Your item is on its way.', 'success');
+      await Promise.all([loadAuctions(), loadMyBids()]);
+      render();
+    }
+  } catch(e) { if (errEl) errEl.textContent = e.message; btn.disabled = false; btn.textContent = 'Try Again'; }
+}
+
 // ========== GO LIVE (Broadcast) ==========
 const GOLIVE_NAMES = ['ArtLover99','BidQueen','NightOwl','PixelHunter','VintageVibes','CryptoKid','SneakerHead','DesignJunkie','MusicNerd','TechBro'];
 
@@ -3818,7 +5922,7 @@ function startBroadcast(auctionId) {
     const rand = Math.random();
     const name = GOLIVE_NAMES[Math.floor(Math.random() * GOLIVE_NAMES.length)];
     if (rand < 0.4) {
-      const msgs = ['Love this!','How much is shipping?','Is this still available?','Amazing piece!','Can you show the back?','What material is this?','Fire 🔥','Need this!','Take my money 💸','Beautiful work'];
+      const msgs = ['Love this!','How much is shipping?','Is this still available?','Amazing piece!','Can you show the back?','What material is this?','Fire ð¥','Need this!','Take my money ð¸','Beautiful work'];
       state.goLiveChat.push({ user: name, text: msgs[Math.floor(Math.random() * msgs.length)] });
     } else if (rand < 0.6) {
       state.goLiveChat.push({ user: name, text: 'just joined', type: 'join' });
