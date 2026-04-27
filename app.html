@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Aucty â Creator Auction Platform</title>
-<meta name="description" content="Live creator auction platform â bid, message, and follow your favorite creators." />
+<title>Aucty — Creator Auction Platform</title>
+<meta name="description" content="Live creator auction platform — bid, message, and follow your favorite creators." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1223,7 +1223,7 @@ textarea.sp-input { min-height: 80px; resize: vertical; font-family: inherit; }
   overflow: hidden;
 }
 .sp-avatar-upload:hover::after {
-  content: 'ð·';
+  content: '📷';
   position: absolute; inset: 0;
   background: rgba(0,0,0,0.5);
   display: grid; place-items: center;
@@ -1822,13 +1822,13 @@ const categories = [
   { id: 'music', label: 'Music', icon: '\u{1F3B5}' },
   { id: 'collectibles', label: 'Collectibles', icon: '\u{1F48E}' },
   { id: 'photography', label: 'Photography', icon: '\u{1F4F8}' },
-  { id: 'watches', label: 'Watches', icon: 'â' },
+  { id: 'watches', label: 'Watches', icon: '⌚' },
   { id: 'sneakers', label: 'Sneakers', icon: '\u{1F45F}' },
   { id: 'cards', label: 'Cards', icon: '\u{1F0CF}' },
-  { id: 'sports', label: 'Sports', icon: 'â½' }
+  { id: 'sports', label: 'Sports', icon: '⚽' }
 ];
 
-const categoryEmojis = { art:'\u{1F3A8}', fashion:'\u{1F457}', tech:'\u{1F4BB}', gaming:'\u{1F3AE}', music:'\u{1F3B5}', collectibles:'\u{1F48E}', photography:'\u{1F4F7}', watches:'â', sneakers:'\u{1F45F}', cards:'\u{1F0CF}', sports:'â½', other:'\u{1F4E6}' };
+const categoryEmojis = { art:'\u{1F3A8}', fashion:'\u{1F457}', tech:'\u{1F4BB}', gaming:'\u{1F3AE}', music:'\u{1F3B5}', collectibles:'\u{1F48E}', photography:'\u{1F4F7}', watches:'⌚', sneakers:'\u{1F45F}', cards:'\u{1F0CF}', sports:'⚽', other:'\u{1F4E6}' };
 
 // ========== UTILITY ==========
 function $(sel) { return document.querySelector(sel); }
@@ -2304,7 +2304,7 @@ function renderTopNav() {
             ${unreadNotifCount > 0 ? '<span class="badge">' + unreadNotifCount + '</span>' : ''}
           </button>
           <button class="nav-icon-btn" onclick="toggleDarkMode()" title="Toggle theme" id="themeBtn">
-            ${state.darkMode ? 'âï¸' : '\u{1F319}'}
+            ${state.darkMode ? '☀️' : '\u{1F319}'}
           </button>
           <button class="nav-avatar" onclick="navigateTo('profile')" title="Profile">
             ${state.user?.initials || 'C'}
@@ -2330,7 +2330,7 @@ function renderSidebar() {
           ${myBids.filter(b => b.status === 'winning' || b.status === 'active').length > 0 ? '<span class="sidebar-badge">' + myBids.filter(b => b.status === 'winning' || b.status === 'active').length + '</span>' : ''}
         </div>
         <div class="sidebar-item ${state.currentPage === 'watchlist' ? 'active' : ''}" onclick="navigateTo('watchlist')">
-          <span class="icon">â¤ï¸</span> Watchlist
+          <span class="icon">❤️</span> Watchlist
         </div>
         <div class="sidebar-item ${state.currentPage === 'messages' ? 'active' : ''}" onclick="navigateTo('messages')">
           <span class="icon">\u{1F4AC}</span> Messages
@@ -2340,7 +2340,7 @@ function renderSidebar() {
           <span class="icon">\u{1F464}</span> Profile
         </div>
         <div class="sidebar-item ${state.currentPage === 'settings' ? 'active' : ''}" onclick="navigateTo('settings')">
-          <span class="icon">âï¸</span> Settings
+          <span class="icon">⚙️</span> Settings
         </div>
       </div>
 
@@ -2431,7 +2431,7 @@ function renderDiscover() {
                   <div class="stream-creator">
                     <div class="stream-creator-ava" style="background:${a.creator.avatar}">${a.creator.initials}</div>
                     <span class="stream-creator-name">${a.creator.name}</span>
-                    ${a.creator.verified ? '<span class="stream-creator-verified">â</span>' : ''}
+                    ${a.creator.verified ? '<span class="stream-creator-verified">✓</span>' : ''}
                   </div>
                   <div class="stream-title">${a.title}</div>
                   <span class="stream-category">${categories.find(c => c.id === a.category)?.label || a.category}</span>
@@ -2468,7 +2468,7 @@ function renderDiscover() {
     ${auctions.length > 0 ? `
     <div class="section-header">
       <h2 class="section-title">\u{1F525} Trending Drops</h2>
-      <a class="section-see-all" href="#">See all â</a>
+      <a class="section-see-all" href="#">See all →</a>
     </div>
     <div class="trending-list">
       ${auctions.slice(0, 5).map((a, i) => `
@@ -2479,7 +2479,7 @@ function renderDiscover() {
           </div>
           <div class="trending-info">
             <div class="trending-title">${a.title}</div>
-            <div class="trending-creator">${a.creator.name} ${a.creator.verified ? 'â' : ''}</div>
+            <div class="trending-creator">${a.creator.name} ${a.creator.verified ? '✓' : ''}</div>
           </div>
           <div class="trending-price">
             <div class="trending-price-val">${formatPrice(a.price)}</div>
@@ -2493,15 +2493,15 @@ function renderDiscover() {
     <!-- Creator Spotlight -->
     ${creators.length > 0 ? `
     <div class="section-header">
-      <h2 class="section-title">â­ Creator Spotlight</h2>
-      <a class="section-see-all" href="#">See all â</a>
+      <h2 class="section-title">⭐ Creator Spotlight</h2>
+      <a class="section-see-all" href="#">See all →</a>
     </div>
     <div class="creator-row">
       ${creators.map(c => `
         <div class="creator-card" onclick="viewCreator('${c.id}')" style="cursor:pointer;">
           <div class="creator-ava-lg" style="background:${c.avatar}">
             ${c.initials}
-            ${c.verified ? '<span class="verified-badge">â</span>' : ''}
+            ${c.verified ? '<span class="verified-badge">✓</span>' : ''}
           </div>
           <div class="creator-name-lg">${c.name}</div>
           <div class="creator-handle">${c.handle}</div>
@@ -2543,19 +2543,19 @@ function renderAuctionCard(a) {
       <div class="auction-img">
         <div class="auction-img-placeholder" style="background:linear-gradient(135deg, ${a.creator.avatar}15, ${a.creator.avatar}30);">${a.imageUrl ? '<img src="' + a.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">' : a.image}</div>
         <div class="auction-badges">
-          ${a.badge === 'live' ? '<span class="auction-badge badge-live">â LIVE</span>' : ''}
+          ${a.badge === 'live' ? '<span class="auction-badge badge-live">● LIVE</span>' : ''}
           ${a.badge === 'hot' ? '<span class="auction-badge badge-hot">\u{1F525} HOT</span>' : ''}
-          ${a.badge === 'ending' ? '<span class="auction-badge badge-ending">â± ENDING</span>' : ''}
+          ${a.badge === 'ending' ? '<span class="auction-badge badge-ending">⏱ ENDING</span>' : ''}
           ${a.badge === 'new' ? '<span class="auction-badge badge-new">NEW</span>' : ''}
         </div>
         <button class="auction-heart ${isWatched ? 'liked' : ''}" onclick="event.stopPropagation(); toggleWatchlist('${a.id}')">
-          ${isWatched ? 'â¤ï¸' : '\u{1F90D}'}
+          ${isWatched ? '❤️' : '\u{1F90D}'}
         </button>
       </div>
       <div class="auction-body">
         <div class="auction-creator-row">
           <div class="auction-creator-ava" style="background:${a.creator.avatar}">${a.creator.initials}</div>
-          <span class="auction-creator-name">${a.creator.name} ${a.creator.verified ? 'â' : ''}</span>
+          <span class="auction-creator-name">${a.creator.name} ${a.creator.verified ? '✓' : ''}</span>
         </div>
         <div class="auction-title">${a.title}</div>
         <div class="auction-price-row">
@@ -2563,9 +2563,9 @@ function renderAuctionCard(a) {
             <div class="auction-price-label">Current bid</div>
             <div class="auction-price">${formatPrice(a.price)}</div>
           </div>
-          <div class="auction-timer">â± ${a.timeLeft}</div>
+          <div class="auction-timer">⏱ ${a.timeLeft}</div>
         </div>
-        <div class="auction-bids">${a.bids} bids Â· ${a.viewers?.toLocaleString() || 0} watching</div>
+        <div class="auction-bids">${a.bids} bids · ${a.viewers?.toLocaleString() || 0} watching</div>
         <button class="auction-bid-btn" onclick="event.stopPropagation(); openDetail('${a.id}')">Place Bid</button>
       </div>
     </div>
@@ -2601,7 +2601,7 @@ function renderBids() {
         </div>
         <div class="bid-info">
           <div class="bid-title">${b.auction.title}</div>
-          <div class="bid-seller">${b.auction.creator.name} Â· ${b.time}</div>
+          <div class="bid-seller">${b.auction.creator.name} · ${b.time}</div>
         </div>
         <div>
           <div class="bid-amount" style="color:var(--text);">${formatPrice(b.amount)}</div>
@@ -2635,7 +2635,7 @@ function renderMessages() {
           <div class="message-item ${chatIdx === i ? 'active' : ''}" data-chat="${i}">
             <div class="message-ava" style="background:${c.user.avatar}">${c.user.initials}</div>
             <div class="message-info">
-              <div class="message-name">${c.user.name} ${c.user.verified ? 'â' : ''}</div>
+              <div class="message-name">${c.user.name} ${c.user.verified ? '✓' : ''}</div>
               <div class="message-preview">${c.lastMsg}</div>
             </div>
             <div class="message-meta">
@@ -2660,7 +2660,7 @@ function renderMessages() {
         </div>
         <div class="chat-input-row">
           <input class="chat-input" type="text" placeholder="Type a message..." id="chatMsgInput">
-          <button class="chat-send-btn" id="chatSendBtn">â¤</button>
+          <button class="chat-send-btn" id="chatSendBtn">➤</button>
         </div>
       </div>
     </div>
@@ -2672,12 +2672,12 @@ function renderWatchlist() {
   const watched = auctions.filter(a => state.watchlist.has(a.id));
   return `
     <div class="section-header">
-      <h2 class="section-title">â¤ï¸ Watchlist</h2>
+      <h2 class="section-title">❤️ Watchlist</h2>
       <span style="font-size:13px; color:var(--text-muted);">${watched.length} items</span>
     </div>
     ${watched.length === 0 ? `
       <div class="empty-state">
-        <div class="icon">â¤ï¸</div>
+        <div class="icon">❤️</div>
         <h3>Your watchlist is empty</h3>
         <p>Heart items to add them to your watchlist and track their progress.</p>
       </div>
@@ -2711,7 +2711,7 @@ function renderProfile() {
           </div>
           <div class="profile-actions">
             <button class="profile-edit-btn">Edit Profile</button>
-            <button class="profile-edit-btn" onclick="navigateTo('settings')">âï¸ Settings</button>
+            <button class="profile-edit-btn" onclick="navigateTo('settings')">⚙️ Settings</button>
           </div>
         </div>
       </div>
@@ -2745,63 +2745,63 @@ function renderSettings() {
         <div class="settings-group-title">Account</div>
         <div class="settings-item" onclick="openSettingsPanel('editProfile')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F464}</div><div><div class="settings-item-label">Edit Profile</div><div class="settings-item-desc">Name, bio, avatar</div></div></div>
-          <span class="settings-arrow">âº</span>
+          <span class="settings-arrow">›</span>
         </div>
         <div class="settings-item" onclick="openSettingsPanel('email')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F4E7}</div><div><div class="settings-item-label">Email</div><div class="settings-item-desc">${state.user?.email || ''}</div></div></div>
-          <span class="settings-arrow">âº</span>
+          <span class="settings-arrow">›</span>
         </div>
         <div class="settings-item" onclick="openSettingsPanel('password')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F512}</div><div><div class="settings-item-label">Password & Security</div><div class="settings-item-desc">2FA, password change</div></div></div>
-          <span class="settings-arrow">âº</span>
+          <span class="settings-arrow">›</span>
         </div>
       </div>
       <div class="settings-group">
         <div class="settings-group-title">Preferences</div>
         <div class="settings-item" onclick="toggleDarkMode()">
-          <div class="settings-item-left"><div class="settings-item-icon">${state.darkMode ? 'âï¸' : '\u{1F319}'}</div><div><div class="settings-item-label">Dark Mode</div><div class="settings-item-desc">Switch between light and dark themes</div></div></div>
+          <div class="settings-item-left"><div class="settings-item-icon">${state.darkMode ? '☀️' : '\u{1F319}'}</div><div><div class="settings-item-label">Dark Mode</div><div class="settings-item-desc">Switch between light and dark themes</div></div></div>
           <div class="toggle ${state.darkMode ? 'active' : ''}"></div>
         </div>
         <div class="settings-item" onclick="openSettingsPanel('notifications')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F514}</div><div><div class="settings-item-label">Notifications</div><div class="settings-item-desc">Push, email, SMS</div></div></div>
-          <span class="settings-arrow">âº</span>
+          <span class="settings-arrow">›</span>
         </div>
       </div>
       <div class="settings-group">
         <div class="settings-group-title">Payments</div>
         <div class="settings-item" onclick="openSettingsPanel('paymentMethods')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F4B3}</div><div><div class="settings-item-label">Payment Methods</div><div class="settings-item-desc">Add or manage cards</div></div></div>
-          <span class="settings-arrow">âº</span>
+          <span class="settings-arrow">›</span>
         </div>
         <div class="settings-item" onclick="openSettingsPanel('transactions')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F4DC}</div><div><div class="settings-item-label">Transaction History</div><div class="settings-item-desc">View past purchases</div></div></div>
-          <span class="settings-arrow">âº</span>
+          <span class="settings-arrow">›</span>
         </div>
       </div>
       <div class="settings-group">
         <div class="settings-group-title">Selling</div>
         <div class="settings-item" onclick="openSettingsPanel('becomeCreator')">
-          <div class="settings-item-left"><div class="settings-item-icon">â</div><div><div class="settings-item-label">Become a Creator</div><div class="settings-item-desc">Get verified and start selling</div></div></div>
-          <span class="settings-arrow">âº</span>
+          <div class="settings-item-left"><div class="settings-item-icon">✅</div><div><div class="settings-item-label">Become a Creator</div><div class="settings-item-desc">Get verified and start selling</div></div></div>
+          <span class="settings-arrow">›</span>
         </div>
         <div class="settings-item" onclick="openSettingsPanel('sellerDashboard')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F4CA}</div><div><div class="settings-item-label">Seller Dashboard</div><div class="settings-item-desc">Revenue, analytics, orders</div></div></div>
-          <span class="settings-arrow">âº</span>
+          <span class="settings-arrow">›</span>
         </div>
       </div>
       <div class="settings-group">
         <div class="settings-group-title">Support</div>
         <div class="settings-item" onclick="openSettingsPanel('helpCenter')">
-          <div class="settings-item-left"><div class="settings-item-icon">â</div><div><div class="settings-item-label">Help Center</div><div class="settings-item-desc">FAQ & support</div></div></div>
-          <span class="settings-arrow">âº</span>
+          <div class="settings-item-left"><div class="settings-item-icon">❓</div><div><div class="settings-item-label">Help Center</div><div class="settings-item-desc">FAQ & support</div></div></div>
+          <span class="settings-arrow">›</span>
         </div>
         <div class="settings-item" onclick="openSettingsPanel('terms')">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F4C4}</div><div><div class="settings-item-label">Terms & Privacy</div><div class="settings-item-desc">Legal information</div></div></div>
-          <span class="settings-arrow">âº</span>
+          <span class="settings-arrow">›</span>
         </div>
         <div class="settings-item" onclick="logout()">
           <div class="settings-item-left"><div class="settings-item-icon">\u{1F6AA}</div><div><div class="settings-item-label" style="color:var(--red);">Sign Out</div><div class="settings-item-desc">Log out of your account</div></div></div>
-          <span class="settings-arrow">âº</span>
+          <span class="settings-arrow">›</span>
         </div>
       </div>
     </div>
@@ -2827,11 +2827,11 @@ function renderAuctionDetail(auctionId) {
             </div>
           </div>
           <div class="detail-content">
-            <button class="detail-close" onclick="closeDetail()">â</button>
+            <button class="detail-close" onclick="closeDetail()">✕</button>
             <div class="detail-creator-row">
               <div class="detail-creator-ava" style="background:${a.creator.avatar}">${a.creator.initials}</div>
               <div>
-                <div class="detail-creator-name">${a.creator.name} ${a.creator.verified ? 'â' : ''}</div>
+                <div class="detail-creator-name">${a.creator.name} ${a.creator.verified ? '✓' : ''}</div>
                 <div class="detail-creator-sub">${a.creator.followers} followers</div>
               </div>
             </div>
@@ -2846,7 +2846,7 @@ function renderAuctionDetail(auctionId) {
               </div>
             </div>
             <div class="detail-meta">
-              <div class="detail-meta-item">â± ${a.timeLeft} left</div>
+              <div class="detail-meta-item">⏱ ${a.timeLeft} left</div>
               <div class="detail-meta-item">\u{1F465} ${a.bids} bids</div>
               <div class="detail-meta-item">\u{1F441} ${a.viewers?.toLocaleString() || '0'} watching</div>
               <div class="detail-meta-item">\u{1F4B0} Started at ${formatPrice(a.startPrice)}</div>
@@ -3187,7 +3187,7 @@ function renderSettingsPanel() {
 function renderEditProfilePanel() {
   const u = state.user;
   return `
-    <div class="sp-header"><h3>Edit Profile</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
+    <div class="sp-header"><h3>Edit Profile</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
     <div class="sp-avatar-upload" onclick="$('#avatarFileInput').click()" title="Change avatar">
       ${u?.initials || 'C'}
     </div>
@@ -3260,7 +3260,7 @@ async function saveProfile() {
 
 function renderEmailPanel() {
   return `
-    <div class="sp-header"><h3>Email Settings</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
+    <div class="sp-header"><h3>Email Settings</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
     <div class="sp-info-row">
       <span class="sp-info-label">Current email</span>
       <span class="sp-info-value">${state.user?.email || 'Not set'}</span>
@@ -3288,7 +3288,7 @@ async function changeEmail() {
 
 function renderPasswordPanel() {
   return `
-    <div class="sp-header"><h3>Password & Security</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
+    <div class="sp-header"><h3>Password & Security</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
     <div class="sp-section-title">Change Password</div>
     <div class="sp-field">
       <div class="sp-label">New Password</div>
@@ -3339,7 +3339,7 @@ async function signOutAllSessions() {
 function renderNotificationsPanel() {
   const p = state.notifPrefs;
   return `
-    <div class="sp-header"><h3>Notifications</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
+    <div class="sp-header"><h3>Notifications</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
     <div class="sp-section-title">Channels</div>
     <div class="sp-toggle-row">
       <div><div class="sp-toggle-label">Push Notifications</div><div class="sp-toggle-desc">Get notified on your device</div></div>
@@ -3378,7 +3378,7 @@ function toggleNotifPref(key) {
 
 function renderPaymentMethodsPanel() {
   return `
-    <div class="sp-header"><h3>Payment Methods</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
+    <div class="sp-header"><h3>Payment Methods</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
     <div class="sp-empty">
       <div style="font-size:48px;margin-bottom:12px;">\u{1F4B3}</div>
       <p>No payment methods added yet.</p>
@@ -3423,7 +3423,7 @@ function addPaymentMethod() {
 function renderTransactionsPanel() {
   const bids = myBids.filter(b => b.status === 'won');
   return `
-    <div class="sp-header"><h3>Transaction History</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
+    <div class="sp-header"><h3>Transaction History</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
     ${bids.length === 0 ? `
       <div class="sp-empty">
         <div style="font-size:48px;margin-bottom:12px;">\u{1F4DC}</div>
@@ -3449,19 +3449,19 @@ function renderTransactionsPanel() {
 
 function renderBecomeCreatorPanel() {
   return `
-    <div class="sp-header"><h3>Become a Creator</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
+    <div class="sp-header"><h3>Become a Creator</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
     <div style="text-align:center;margin-bottom:20px;">
-      <div style="font-size:64px;margin-bottom:12px;">ð</div>
+      <div style="font-size:64px;margin-bottom:12px;">🌟</div>
       <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;">Start Selling on Aucty</h3>
       <p style="font-size:14px;color:var(--text-muted);">Join our creator community and auction your exclusive items, offer 1-on-1 calls, and build your brand.</p>
     </div>
     <div class="sp-divider"></div>
     <div class="sp-section-title">Benefits</div>
-    <div class="sp-card"><div style="font-size:14px;">â List unlimited auctions</div></div>
-    <div class="sp-card"><div style="font-size:14px;">ð° Earn 51% of every sale</div></div>
-    <div class="sp-card"><div style="font-size:14px;">ð Access to analytics dashboard</div></div>
-    <div class="sp-card"><div style="font-size:14px;">ð Offer paid 1-on-1 calls</div></div>
-    <div class="sp-card"><div style="font-size:14px;">â¡ Priority support</div></div>
+    <div class="sp-card"><div style="font-size:14px;">✅ List unlimited auctions</div></div>
+    <div class="sp-card"><div style="font-size:14px;">💰 Earn 51% of every sale</div></div>
+    <div class="sp-card"><div style="font-size:14px;">📊 Access to analytics dashboard</div></div>
+    <div class="sp-card"><div style="font-size:14px;">📞 Offer paid 1-on-1 calls</div></div>
+    <div class="sp-card"><div style="font-size:14px;">⚡ Priority support</div></div>
     <div class="sp-divider"></div>
     <div class="sp-field">
       <div class="sp-label">Creator Name / Brand</div>
@@ -3521,7 +3521,7 @@ function renderSellerDashboardPanel() {
   const myAuctions = auctions.filter(a => a.creator_id === state.user?.id);
   const totalRevenue = myBids.filter(b => b.status === 'won').reduce((sum, b) => sum + (b.amount_cents || 0), 0);
   return `
-    <div class="sp-header"><h3>Seller Dashboard</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
+    <div class="sp-header"><h3>Seller Dashboard</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">
       <div class="sp-card" style="text-align:center;">
         <div style="font-size:24px;font-weight:700;color:var(--brand);">${myAuctions.length}</div>
@@ -3563,16 +3563,16 @@ function renderHelpCenterPanel() {
     { q: 'How does the 51/49 split work?', a: 'Creators keep 51% of every sale, while Aucty retains 49% to cover platform fees, payment processing, and support.' },
     { q: 'Can I cancel a bid?', a: 'Bids are binding once placed. Make sure you\'re comfortable with the amount before bidding.' },
     { q: 'How do 1-on-1 calls work?', a: 'Some creators offer paid video calls. You can bid on call slots just like items. Once won, you\'ll receive scheduling details via messages.' },
-    { q: 'How do I become a creator?', a: 'Go to Settings â Become a Creator and fill out the application. We review applications within 48 hours.' },
+    { q: 'How do I become a creator?', a: 'Go to Settings → Become a Creator and fill out the application. We review applications within 48 hours.' },
     { q: 'What payment methods are accepted?', a: 'We support major credit/debit cards through Stripe. More payment options coming soon.' },
   ];
   return `
-    <div class="sp-header"><h3>Help Center</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
+    <div class="sp-header"><h3>Help Center</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
     <div class="sp-section-title">Frequently Asked Questions</div>
     ${faqs.map((f, i) => `
       <div class="sp-card" style="cursor:pointer;" onclick="this.querySelector('.faq-a').style.display=this.querySelector('.faq-a').style.display==='none'?'block':'none'">
         <div style="font-weight:600;font-size:14px;display:flex;justify-content:space-between;align-items:center;">
-          ${f.q} <span style="color:var(--text-muted);">â¸</span>
+          ${f.q} <span style="color:var(--text-muted);">▸</span>
         </div>
         <div class="faq-a" style="display:none;margin-top:10px;font-size:13px;color:var(--text-muted);line-height:1.5;">${f.a}</div>
       </div>
@@ -3601,7 +3601,7 @@ function submitSupportTicket() {
 
 function renderTermsPanel() {
   return `
-    <div class="sp-header"><h3>Terms & Privacy</h3><button class="sp-close" onclick="closeSettingsPanel()">â</button></div>
+    <div class="sp-header"><h3>Terms & Privacy</h3><button class="sp-close" onclick="closeSettingsPanel()">✕</button></div>
     <div class="sp-section-title">Terms of Service</div>
     <div class="sp-card">
       <p style="font-size:13px;line-height:1.6;color:var(--text-muted);">
