@@ -3301,14 +3301,14 @@ async function applyCreator() {
     });
     if (error) {
       if (error.code === '42P01') {
-        showToast('Application submitted! We\\'ll review it shortly.', 'success');
+        showToast('Application submitted! We\'ll review it shortly.', 'success');
       } else throw error;
     } else {
-      showToast('Application submitted! We\\'ll review it shortly.', 'success');
+      showToast('Application submitted! We\'ll review it shortly.', 'success');
     }
     closeSettingsPanel();
   } catch(e) {
-    showToast('Application submitted! We\\'ll review it shortly.', 'success');
+    showToast('Application submitted! We\'ll review it shortly.', 'success');
     closeSettingsPanel();
   }
 }
@@ -3355,10 +3355,10 @@ function renderSellerDashboardPanel() {
 
 function renderHelpCenterPanel() {
   const faqs = [
-    { q: 'How do I place a bid?', a: 'Navigate to any auction, enter your bid amount (must be higher than current price), and click "Place Bid". You\\'ll be notified if you\\'re outbid.' },
+    { q: 'How do I place a bid?', a: 'Navigate to any auction, enter your bid amount (must be higher than current price), and click "Place Bid". You\'ll be notified if you\'re outbid.' },
     { q: 'How does the 51/49 split work?', a: 'Creators keep 51% of every sale, while Aucty retains 49% to cover platform fees, payment processing, and support.' },
-    { q: 'Can I cancel a bid?', a: 'Bids are binding once placed. Make sure you\\'re comfortable with the amount before bidding.' },
-    { q: 'How do 1-on-1 calls work?', a: 'Some creators offer paid video calls. You can bid on call slots just like items. Once won, you\\'ll receive scheduling details via messages.' },
+    { q: 'Can I cancel a bid?', a: 'Bids are binding once placed. Make sure you\'re comfortable with the amount before bidding.' },
+    { q: 'How do 1-on-1 calls work?', a: 'Some creators offer paid video calls. You can bid on call slots just like items. Once won, you\'ll receive scheduling details via messages.' },
     { q: 'How do I become a creator?', a: 'Go to Settings → Become a Creator and fill out the application. We review applications within 48 hours.' },
     { q: 'What payment methods are accepted?', a: 'We support major credit/debit cards through Stripe. More payment options coming soon.' },
   ];
@@ -3391,7 +3391,7 @@ function submitSupportTicket() {
   const subject = $('#spSupportSubject')?.value?.trim();
   const msg = $('#spSupportMsg')?.value?.trim();
   if (!subject || !msg) { showToast('Please fill in subject and message', 'error'); return; }
-  showToast('Support ticket submitted! We\\'ll get back to you within 24 hours.', 'success');
+  showToast('Support ticket submitted! We\'ll get back to you within 24 hours.', 'success');
   closeSettingsPanel();
 }
 
@@ -3453,7 +3453,7 @@ function downloadMyData() {
 
 async function requestAccountDeletion() {
   if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) return;
-  showToast('Account deletion request submitted. You\\'ll receive a confirmation email.', 'info');
+  showToast('Account deletion request submitted. You\'ll receive a confirmation email.', 'info');
   closeSettingsPanel();
 }
 
